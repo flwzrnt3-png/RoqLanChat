@@ -10,25 +10,50 @@
         .msginput{width:75%;padding:12px;border-radius:20px;border:1px solid #ccc;}
         .sendbtn{padding:12px 20px;border:none;border-radius:20px;background:#ff1493;color:white;}
         .msg{padding:12px;border-radius:20px;display:inline-block;max-width:70%;color:white;}
+
+        .profile{
+            width:70px;
+            height:70px;
+            border-radius:50%;
+            border:3px solid white;
+            object-fit:cover;
+            margin-bottom:10px;
+        }
     </style>
 </head>
 <body>
+
 <div class="header">
+
+{% if profile_pic %}
+<img class="profile" src="/static/profiles/{{ profile_pic }}">
+<br>
+{% endif %}
+
 ❤️ RoqLan Chat
 <br>
+
 <span style="font-size:14px;">
 👤 {{ current_user }}
 </span>
+
 </div>
+
 <div class="messages">
 {% for user, text in messages %}
     {% if user == current_user %}
         <div style="text-align:right;margin:15px;">
-            <div class="msg" style="background:#8a2be2;"> <b>{{user}}</b><br> {{text}} </div>
+            <div class="msg" style="background:#8a2be2;">
+                <b>{{user}}</b><br>
+                {{text}}
+            </div>
         </div>
     {% else %}
         <div style="text-align:left;margin:15px;">
-            <div class="msg" style="background:#ff1493;"> <b>{{user}}</b><br> {{text}} </div>
+            <div class="msg" style="background:#ff1493;">
+                <b>{{user}}</b><br>
+                {{text}}
+            </div>
         </div>
     {% endif %}
 {% endfor %}
@@ -40,5 +65,6 @@
         <button class="sendbtn" type="submit">إرسال</button>
     </form>
 </div>
+
 </body>
 </html>
