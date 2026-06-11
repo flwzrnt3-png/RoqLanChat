@@ -1,3 +1,5 @@
+import os
+from werkzeug.utils import secure_filename
 from flask import Flask, request, redirect, render_template, url_for
 import sqlite3
 
@@ -14,7 +16,10 @@ def init_db():
         password TEXT
     )
     """)
-
+try:
+    c.execute("ALTER TABLE users ADD COLUMN profile_pic TEXT")
+except:
+    pass
     c.execute("""
     CREATE TABLE IF NOT EXISTS messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
