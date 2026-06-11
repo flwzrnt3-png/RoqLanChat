@@ -1,7 +1,10 @@
 from flask import Flask, request, redirect, render_template
 import sqlite3
+import os
 
 app = Flask(__name__)
+
+os.makedirs("static/profiles", exist_ok=True)
 
 def init_db():
     conn = sqlite3.connect("chat.db")
@@ -64,19 +67,28 @@ def register():
 
         username = request.form.get("username", "")
         password = request.form.get("password", "")
+        profile_pic = request.files.get("profile_pic")
+
+        filename = ""
+
+        if profile_pic and profile_pic.filename != "":
+            filename = profile_pic.filename
+            profile_pic.save(f"static/profiles/{filename}")
 
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
 
         try:
+
             c.execute(
                 "INSERT INTO users (username,password,profile_pic) VALUES (?,?,?)",
-                (username, password, "")
+                (username, password, filename)
             )
 
             conn.commit()
 
         except:
+
             conn.close()
             return "اسم المستخدم موجود مسبقاً"
 
