@@ -13,7 +13,13 @@
     </style>
 </head>
 <body>
-<div class="header">❤️ RoqLan Chat</div>
+<div class="header">
+❤️ RoqLan Chat
+<br>
+<span style="font-size:14px;">
+👤 {{ current_user }}
+</span>
+</div>
 <div class="messages">
 {% for user, text in messages %}
     {% if user == current_user %}
