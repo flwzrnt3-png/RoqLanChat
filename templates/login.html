@@ -1,56 +1,86 @@
 <!DOCTYPE html>
 <html dir="rtl">
 <head>
-    <title>RoqLan Chat</title>
-    <style>
-        body{
-            margin:0;
-            font-family:Arial;
-            background:linear-gradient(135deg,#4b0082,#ff1493);
-            height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-        }
-        .box{
-            background:white;
-            width:320px;
-            padding:25px;
-            border-radius:25px;
-            text-align:center;
-            box-shadow:0 0 25px rgba(0,0,0,.3);
-        }
-        h1{
-            color:#4b0082;
-        }
-        input{
-            width:90%;
-            padding:12px;
-            margin:10px;
-            border:none;
-            border-radius:12px;
-            background:#f0f0f0;
-        }
-        button{
-            width:95%;
-            padding:12px;
-            border:none;
-            border-radius:12px;
-            background:#ff1493;
-            color:white;
-            font-size:18px;
-            cursor:pointer;
-        }
-    </style>
+<title>تسجيل الدخول</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#4b0082,#ff1493);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+background:white;
+padding:25px;
+width:320px;
+border-radius:20px;
+text-align:center;
+}
+
+input{
+width:90%;
+padding:12px;
+margin:10px;
+border:none;
+border-radius:10px;
+background:#f0f0f0;
+}
+
+button{
+width:95%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#ff1493;
+color:white;
+font-size:18px;
+}
+
+a{
+text-decoration:none;
+color:#4b0082;
+}
+
+</style>
+
 </head>
+
 <body>
+
 <div class="box">
-    <h1>❤️ RoqLan Chat</h1>
-    <form method="post">
-        <input name="username" placeholder="اسم المستخدم">
-        <input name="code" type="password" placeholder="الكود السري">
-        <button type="submit">دخول</button>
-    </form>
+
+<h1>RoqLan Chat ❤️</h1>
+
+<form method="post">
+
+<input
+name="username"
+placeholder="اسم المستخدم">
+
+<input
+type="password"
+name="password"
+placeholder="كلمة المرور">
+
+<button type="submit">
+دخول
+</button>
+
+</form>
+
+<br>
+
+<a href="/register">
+إنشاء حساب جديد
+</a>
+
 </div>
+
 </body>
-  </html>
+</html>
