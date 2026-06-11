@@ -71,9 +71,13 @@ def register():
 
         filename = ""
 
-        if profile_pic and profile_pic.filename != "":
+        if profile_pic and profile_pic.filename:
+
             filename = profile_pic.filename
-            profile_pic.save(f"static/profiles/{filename}")
+
+            profile_pic.save(
+                os.path.join("static/profiles", filename)
+            )
 
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
@@ -126,13 +130,27 @@ def chat():
 
     messages = c.fetchall()
 
+    c.execute(
+        "SELECT profile_pic FROM users WHERE username=?",
+        (username,)
+    )
+
+    user_data = c.fetchone()
+
+    profile_pic = ""
+
+    if user_data:
+        profile_pic = user_data[0]
+
     conn.close()
 
     return render_template(
         "chat.html",
         messages=messages,
-        current_user=username
+        current_user=username,
+        profile_pic=profile_pic
     )
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
