@@ -3,11 +3,17 @@ import sqlite3
 
 app = Flask(__name__)
 
-SECRET_CODE = "1111"
-
 def init_db():
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT
+    )
+    """)
 
     c.execute("""
     CREATE TABLE IF NOT EXISTS messages (
@@ -22,18 +28,65 @@ def init_db():
 
 init_db()
 
+
 @app.route("/", methods=["GET", "POST"])
 def login():
 
     if request.method == "POST":
 
         username = request.form.get("username", "")
-        code = request.form.get("code", "")
+        password = request.form.get("password", "")
 
-        if code == SECRET_CODE and username:
+        conn = sqlite3.connect("chat.db")
+        c = conn.cursor()
+
+        c.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
+
+        user = c.fetchone()
+
+        conn.close()
+
+        if user:
             return redirect(f"/chat?user={username}")
 
+        return "اسم المستخدم أو كلمة المرور غير صحيحة"
+
     return render_template("login.html")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    if request.method == "POST":
+
+        username = request.form.get("username", "")
+        password = request.form.get("password", "")
+
+        conn = sqlite3.connect("chat.db")
+        c = conn.cursor()
+
+        try:
+
+            c.execute(
+                "INSERT INTO users (username,password) VALUES (?,?)",
+                (username, password)
+            )
+
+            conn.commit()
+
+        except:
+
+            conn.close()
+            return "اسم المستخدم موجود مسبقاً"
+
+        conn.close()
+
+        return redirect("/")
+
+    return render_template("register.html")
 
 
 @app.route("/chat", methods=["GET", "POST"])
@@ -49,15 +102,16 @@ def chat():
         msg = request.form.get("msg", "")
 
         if msg:
+
             c.execute(
-                "INSERT INTO messages (username, message) VALUES (?, ?)",
+                "INSERT INTO messages (username,message) VALUES (?,?)",
                 (username, msg)
             )
 
             conn.commit()
 
     c.execute(
-        "SELECT username, message FROM messages ORDER BY id ASC"
+        "SELECT username,message FROM messages ORDER BY id ASC"
     )
 
     messages = c.fetchall()
@@ -69,6 +123,7 @@ def chat():
         messages=messages,
         current_user=username
     )
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
