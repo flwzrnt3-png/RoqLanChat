@@ -1,6 +1,4 @@
-import os
-from werkzeug.utils import secure_filename
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template
 import sqlite3
 
 app = Flask(__name__)
@@ -13,13 +11,11 @@ def init_db():
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
-        password TEXT
+        password TEXT,
+        profile_pic TEXT
     )
     """)
-try:
-    c.execute("ALTER TABLE users ADD COLUMN profile_pic TEXT")
-except:
-    pass
+
     c.execute("""
     CREATE TABLE IF NOT EXISTS messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +28,6 @@ except:
     conn.close()
 
 init_db()
-
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -74,16 +69,14 @@ def register():
         c = conn.cursor()
 
         try:
-
             c.execute(
-                "INSERT INTO users (username,password) VALUES (?,?)",
-                (username, password)
+                "INSERT INTO users (username,password,profile_pic) VALUES (?,?,?)",
+                (username, password, "")
             )
 
             conn.commit()
 
         except:
-
             conn.close()
             return "اسم المستخدم موجود مسبقاً"
 
@@ -128,7 +121,6 @@ def chat():
         messages=messages,
         current_user=username
     )
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
