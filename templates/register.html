@@ -47,12 +47,19 @@ a{
 <body>
 
 <div class="box">
+
 <h2>❤️ إنشاء حساب</h2>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
+
 <input type="text" name="username" placeholder="اسم المستخدم" required>
+
 <input type="password" name="password" placeholder="كلمة المرور" required>
+
+<input type="file" name="profile_pic" accept="image/*">
+
 <button type="submit">إنشاء حساب</button>
+
 </form>
 
 <br>
