@@ -1,3 +1,11 @@
+from flask import Flask, request, redirect, render_template
+import sqlite3
+import os
+
+app = Flask(__name__)
+
+os.makedirs("static/profiles", exist_ok=True)
+
 def init_db():
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
@@ -60,7 +68,6 @@ def login():
 
     return render_template("login.html")
 
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
 
@@ -102,7 +109,6 @@ def register():
         return redirect("/")
 
     return render_template("register.html")
-
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
@@ -182,8 +188,7 @@ def private_chat():
     OR
     (sender=? AND receiver=?)
     ORDER BY id ASC
-    """,
-    (sender, receiver, receiver, sender))
+    """, (sender, receiver, receiver, sender))
 
     messages = c.fetchall()
 
@@ -194,7 +199,7 @@ def private_chat():
         messages=messages,
         sender=sender,
         receiver=receiver
-            )
-    
+    )
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
