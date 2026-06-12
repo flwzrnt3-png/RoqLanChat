@@ -21,62 +21,61 @@ height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background:
-radial-gradient(circle at top left,#5b21ff 0%,transparent 35%),
-radial-gradient(circle at bottom right,#006eff 0%,transparent 35%),
-#040816;
-color:white;
 overflow:hidden;
-position:relative;
-}
-
-#langBtn{
-position:absolute;
-top:20px;
-right:20px;
-background:#111827;
+background:
+radial-gradient(circle at top left,#6a00ff 0%,transparent 35%),
+radial-gradient(circle at bottom right,#008cff 0%,transparent 35%),
+#020617;
 color:white;
-border:1px solid #444;
-padding:10px 15px;
-border-radius:12px;
-cursor:pointer;
-font-size:14px;
 }
 
 .container{
 width:90%;
-max-width:400px;
+max-width:420px;
 text-align:center;
 }
 
+#langBtn{
+position:fixed;
+top:20px;
+right:20px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,.15);
+color:white;
+padding:12px 18px;
+border-radius:16px;
+cursor:pointer;
+font-size:15px;
+}
+
 .logo{
-width:75px;
-height:75px;
+width:95px;
+height:95px;
 margin:auto;
-border-radius:22px;
-background:linear-gradient(135deg,#25b8ff,#8a2eff);
+border-radius:28px;
+background:linear-gradient(135deg,#1ea7ff,#8a2eff);
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:40px;
+font-size:52px;
 font-weight:bold;
-color:white;
 box-shadow:
-0 0 25px rgba(138,46,255,.7),
-0 0 45px rgba(30,167,255,.5);
+0 0 35px rgba(138,46,255,.7),
+0 0 60px rgba(30,167,255,.5);
 }
 
 .app-name{
-font-size:42px;
+font-size:38px;
 font-weight:bold;
-letter-spacing:4px;
-margin-top:15px;
+letter-spacing:5px;
+margin-top:18px;
 }
 
 .tagline{
 margin-top:10px;
 font-size:18px;
-color:#cfcfcf;
+color:#d0d0d0;
 }
 
 form{
@@ -85,10 +84,11 @@ margin-top:35px;
 
 input{
 width:100%;
-padding:17px;
-margin-bottom:15px;
-background:#101827;
-border:1px solid #25324b;
+padding:18px;
+margin-bottom:16px;
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.08);
 border-radius:18px;
 color:white;
 font-size:16px;
@@ -101,7 +101,7 @@ border-color:#8a2eff;
 
 .login-btn{
 width:100%;
-padding:17px;
+padding:18px;
 border:none;
 border-radius:20px;
 font-size:20px;
@@ -115,23 +115,22 @@ color:white;
 display:block;
 margin-top:15px;
 width:100%;
-padding:17px;
+padding:18px;
 border-radius:20px;
 border:2px solid #7a4cff;
 background:rgba(255,255,255,.03);
-color:white;
 text-decoration:none;
+color:white;
 font-size:18px;
 }
 
 .forgot{
-margin-top:25px;
+margin-top:22px;
 }
 
 .forgot a{
-color:#33a9ff;
+color:#3db2ff;
 text-decoration:none;
-font-size:16px;
 }
 
 </style>
@@ -154,36 +153,38 @@ R
 ROVIQ
 </div>
 
-<div class="tagline">
-Connect • Chat • Discover
+<div class="tagline" id="tagline">
+تواصل • دردش • اكتشف
 </div>
 
 <form method="POST">
 
 <input
+id="user"
 type="text"
 name="username"
 placeholder="اسم المستخدم أو البريد الإلكتروني"
 required>
 
 <input
+id="pass"
 type="password"
 name="password"
 placeholder="كلمة المرور"
 required>
 
-<button class="login-btn" type="submit">
+<button class="login-btn" id="loginBtn" type="submit">
 تسجيل الدخول
 </button>
 
 </form>
 
-<a href="/register" class="register-btn">
+<a href="/register" class="register-btn" id="registerBtn">
 إنشاء حساب جديد
 </a>
 
 <div class="forgot">
-<a href="/forgot-password">
+<a href="/forgot-password" id="forgot">
 نسيت كلمة المرور؟
 </a>
 </div>
@@ -198,55 +199,53 @@ function toggleLanguage(){
 
 if(arabic){
 
-document.querySelector(".tagline").innerText =
+document.documentElement.dir="ltr";
+
+document.getElementById("tagline").innerText =
 "Connect • Chat • Discover";
 
-document.querySelector('input[name="username"]').placeholder =
+document.getElementById("user").placeholder =
 "Username or Email";
 
-document.querySelector('input[name="password"]').placeholder =
+document.getElementById("pass").placeholder =
 "Password";
 
-document.querySelector(".login-btn").innerText =
+document.getElementById("loginBtn").innerText =
 "Login";
 
-document.querySelector(".register-btn").innerText =
+document.getElementById("registerBtn").innerText =
 "Create Account";
 
-document.querySelector(".forgot a").innerText =
+document.getElementById("forgot").innerText =
 "Forgot Password?";
 
 document.getElementById("langBtn").innerText =
 "العربية";
 
-document.documentElement.dir = "ltr";
-document.documentElement.lang = "en";
-
 }else{
 
-document.querySelector(".tagline").innerText =
+document.documentElement.dir="rtl";
+
+document.getElementById("tagline").innerText =
 "تواصل • دردش • اكتشف";
 
-document.querySelector('input[name="username"]').placeholder =
+document.getElementById("user").placeholder =
 "اسم المستخدم أو البريد الإلكتروني";
 
-document.querySelector('input[name="password"]').placeholder =
+document.getElementById("pass").placeholder =
 "كلمة المرور";
 
-document.querySelector(".login-btn").innerText =
+document.getElementById("loginBtn").innerText =
 "تسجيل الدخول";
 
-document.querySelector(".register-btn").innerText =
+document.getElementById("registerBtn").innerText =
 "إنشاء حساب جديد";
 
-document.querySelector(".forgot a").innerText =
+document.getElementById("forgot").innerText =
 "نسيت كلمة المرور؟";
 
 document.getElementById("langBtn").innerText =
 "English";
-
-document.documentElement.dir = "rtl";
-document.documentElement.lang = "ar";
 
 }
 
