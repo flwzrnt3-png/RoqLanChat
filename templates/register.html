@@ -5,42 +5,59 @@
 <title>إنشاء حساب - RoqLan Chat</title>
 
 <style>
+
 body{
-    background:#170024;
-    font-family:Arial;
-    text-align:center;
-    color:white;
-    padding-top:80px;
+background:#0f0f0f;
+font-family:Arial;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
 }
 
 .box{
-    width:320px;
-    margin:auto;
-    background:#2a003d;
-    padding:20px;
-    border-radius:15px;
+width:340px;
+}
+
+h1{
+text-align:center;
+margin-bottom:25px;
 }
 
 input{
-    width:90%;
-    padding:12px;
-    margin:8px;
-    border:none;
-    border-radius:10px;
+width:100%;
+padding:14px;
+margin-bottom:12px;
+background:#1e1e1e;
+border:1px solid #333;
+border-radius:12px;
+color:white;
+box-sizing:border-box;
 }
 
 button{
-    background:#ff1493;
-    color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:10px;
-    cursor:pointer;
+width:100%;
+padding:14px;
+background:#0095f6;
+border:none;
+border-radius:12px;
+color:white;
+font-size:16px;
+cursor:pointer;
 }
 
 a{
-    color:#ff66cc;
+color:#0095f6;
+text-decoration:none;
 }
+
+.login-link{
+text-align:center;
+margin-top:15px;
+}
+
 </style>
 
 </head>
@@ -48,25 +65,54 @@ a{
 
 <div class="box">
 
-<h2>❤️ إنشاء حساب</h2>
+<h1>إنشاء حساب جديد</h1>
 
 <form method="POST" enctype="multipart/form-data">
 
-<input type="text" name="username" placeholder="اسم المستخدم" required>
+<input
+type="text"
+name="username"
+placeholder="اسم المستخدم (اليوزر)"
+required>
 
-<input type="password" name="password" placeholder="كلمة المرور" required>
+<input
+type="password"
+name="password"
+placeholder="كلمة المرور"
+required>
 
-<input type="file" name="profile_pic" accept="image/*">
+<input
+type="date"
+name="birth_date"
+required>
 
-<button type="submit">إنشاء حساب</button>
+<input
+type="email"
+name="email"
+placeholder="البريد الإلكتروني"
+required>
+
+<input
+type="text"
+name="full_name"
+placeholder="الاسم الظاهر للناس">
+
+<input
+type="file"
+name="profile_pic"
+accept="image/*">
+
+<button type="submit">
+إنشاء الحساب
+</button>
 
 </form>
 
-<br>
-
+<div class="login-link">
 <a href="/">لديك حساب؟ تسجيل الدخول</a>
+</div>
 
 </div>
 
 </body>
-</html>
+    </html>
