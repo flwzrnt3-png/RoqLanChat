@@ -39,13 +39,19 @@ text-align:center;
 margin-bottom:35px;
 }
 
-.logo-img{
+.logo{
 width:95px;
 height:95px;
-object-fit:contain;
-display:block;
 margin:auto;
-filter:drop-shadow(0 0 25px rgba(118,77,255,.5));
+border-radius:25px;
+background:linear-gradient(135deg,#1ea7ff,#8a2eff);
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:48px;
+font-weight:bold;
+color:white;
+box-shadow:0 0 25px rgba(118,77,255,.5);
 }
 
 .app-name{
@@ -109,11 +115,6 @@ border:2px solid #7044ff;
 text-decoration:none;
 color:white;
 font-size:18px;
-transition:.3s;
-}
-
-.register-btn:hover{
-background:#7044ff22;
 }
 
 .footer{
@@ -138,10 +139,9 @@ text-decoration:none;
 
 <div class="logo-box">
 
-<img
-src="/static/logo.png"
-class="logo-img"
-alt="NOVIQ Logo">
+<div class="logo">
+N
+</div>
 
 <div class="app-name">
 NOVIQ
