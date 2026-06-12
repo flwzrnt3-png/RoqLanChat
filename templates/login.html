@@ -1,84 +1,95 @@
 <!DOCTYPE html>
 <html dir="rtl">
 <head>
-<title>تسجيل الدخول</title>
+<meta charset="UTF-8">
+<title>تسجيل الدخول - RoqLan Chat</title>
 
 <style>
 
 body{
-margin:0;
+background:#0b0b0b;
 font-family:Arial;
-background:linear-gradient(135deg,#4b0082,#ff1493);
-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+height:100vh;
+margin:0;
+color:white;
 }
 
 .box{
-background:white;
-padding:25px;
-width:320px;
-border-radius:20px;
+width:340px;
+}
+
+h1{
 text-align:center;
+margin-bottom:25px;
 }
 
 input{
-width:90%;
-padding:12px;
-margin:10px;
-border:none;
-border-radius:10px;
-background:#f0f0f0;
+width:100%;
+padding:14px;
+margin-bottom:12px;
+background:#1e1e1e;
+border:1px solid #333;
+border-radius:12px;
+color:white;
+box-sizing:border-box;
 }
 
 button{
-width:95%;
-padding:12px;
+width:100%;
+padding:14px;
+background:#0095f6;
 border:none;
-border-radius:10px;
-background:#ff1493;
+border-radius:12px;
 color:white;
-font-size:18px;
+font-size:16px;
+cursor:pointer;
 }
 
 a{
+color:#0095f6;
 text-decoration:none;
-color:#4b0082;
+}
+
+.register-link{
+text-align:center;
+margin-top:15px;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="box">
 
-<h1>RoqLan Chat ❤️</h1>
+<h1>❤️ RoqLan Chat</h1>
 
-<form method="post">
+<form method="POST">
 
 <input
+type="text"
 name="username"
-placeholder="اسم المستخدم">
+placeholder="اسم المستخدم"
+required>
 
 <input
 type="password"
 name="password"
-placeholder="كلمة المرور">
+placeholder="كلمة المرور"
+required>
 
 <button type="submit">
-دخول
+تسجيل الدخول
 </button>
 
 </form>
 
-<br>
-
-<a href="/register">
-إنشاء حساب جديد
-</a>
+<div class="register-link">
+<a href="/register">إنشاء حساب جديد</a>
+</div>
 
 </div>
 
