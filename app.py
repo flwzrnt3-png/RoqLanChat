@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS private_messages (
     message TEXT
    )
    """)
+
     conn.commit()
     conn.close()
 
