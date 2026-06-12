@@ -10,17 +10,17 @@ def init_db():
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE,
-    full_name TEXT,
-    email TEXT UNIQUE,
-    password TEXT,
-    birth_date TEXT,
-    profile_pic TEXT
-)
-""")
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        full_name TEXT,
+        email TEXT UNIQUE,
+        password TEXT,
+        birth_date TEXT,
+        profile_pic TEXT
+    )
+    """)
 
     c.execute("""
     CREATE TABLE IF NOT EXISTS messages (
