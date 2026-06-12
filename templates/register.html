@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>إنشاء حساب - ROVIQ</title>
+<title>ROVIQ - إنشاء حساب</title>
 
 <style>
 
@@ -17,7 +17,7 @@ font-family:Arial,sans-serif;
 
 body{
 background:linear-gradient(135deg,#020617,#000814,#0a2472);
-min-height:100vh;
+height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -27,32 +27,32 @@ padding:20px;
 .box{
 width:100%;
 max-width:420px;
-background:rgba(255,255,255,0.04);
+background:rgba(255,255,255,.05);
 backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,0.1);
-border-radius:24px;
+border-radius:25px;
 padding:30px;
-box-shadow:0 0 30px rgba(0,140,255,.2);
+border:1px solid rgba(255,255,255,.1);
+box-shadow:0 0 35px rgba(0,140,255,.2);
 }
 
 .logo{
 text-align:center;
 font-size:42px;
 font-weight:bold;
-margin-bottom:10px;
 color:white;
+margin-bottom:15px;
 }
 
 .subtitle{
 text-align:center;
-color:#aaa;
+color:#bbb;
 margin-bottom:25px;
 }
 
 input{
 width:100%;
 padding:15px;
-margin-bottom:12px;
+margin-bottom:15px;
 border:none;
 outline:none;
 border-radius:14px;
@@ -66,11 +66,6 @@ input:focus{
 border-color:#4f46e5;
 }
 
-.file{
-background:#111827;
-padding:12px;
-}
-
 button{
 width:100%;
 padding:15px;
@@ -81,11 +76,6 @@ color:white;
 font-size:17px;
 font-weight:bold;
 cursor:pointer;
-transition:.3s;
-}
-
-button:hover{
-transform:scale(1.02);
 }
 
 .login-link{
@@ -98,10 +88,6 @@ color:#60a5fa;
 text-decoration:none;
 }
 
-.login-link a:hover{
-text-decoration:underline;
-}
-
 </style>
 </head>
 <body>
@@ -111,10 +97,10 @@ text-decoration:underline;
 <div class="logo">ROVIQ</div>
 
 <div class="subtitle">
-إنشاء حساب جديد
+الخطوة الأولى
 </div>
 
-<form method="POST" enctype="multipart/form-data">
+<form method="POST">
 
 <input
 type="text"
@@ -122,44 +108,14 @@ name="username"
 placeholder="اسم المستخدم"
 required>
 
-<input
-type="text"
-name="full_name"
-placeholder="الاسم الكامل">
-
-<input
-type="email"
-name="email"
-placeholder="البريد الإلكتروني"
-required>
-
-<input
-type="password"
-name="password"
-placeholder="كلمة المرور"
-required>
-
-<input
-type="date"
-name="birth_date"
-required>
-
-<input
-class="file"
-type="file"
-name="profile_pic"
-accept="image/*">
-
 <button type="submit">
-إنشاء الحساب
+التالي
 </button>
 
 </form>
 
 <div class="login-link">
-<a href="/">
-لديك حساب؟ تسجيل الدخول
-</a>
+<a href="/">لديك حساب؟ تسجيل الدخول</a>
 </div>
 
 </div>
