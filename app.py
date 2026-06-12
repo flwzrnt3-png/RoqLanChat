@@ -76,9 +76,12 @@ def register():
 
     if request.method == "POST":
 
-        username = request.form.get("username", "")
-        password = request.form.get("password", "")
-        profile_pic = request.files.get("profile_pic")
+username = request.form.get("username", "")
+password = request.form.get("password", "")
+email = request.form.get("email", "")
+birth_date = request.form.get("birth_date", "")
+full_name = request.form.get("full_name", "")
+profile_pic = request.files.get("profile_pic")
 
         filename = ""
 
@@ -96,8 +99,19 @@ def register():
         try:
 
             c.execute(
-                "INSERT INTO users (username,password,profile_pic) VALUES (?,?,?)",
-                (username, password, filename)
+    """
+    INSERT INTO users
+    (username,full_name,email,password,birth_date,profile_pic)
+    VALUES (?,?,?,?,?,?)
+    """,
+    (
+        username,
+        full_name,
+        email,
+        password,
+        birth_date,
+        filename
+    )
             )
 
             conn.commit()
