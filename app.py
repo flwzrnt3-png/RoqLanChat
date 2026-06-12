@@ -26,7 +26,14 @@ def init_db():
         message TEXT
     )
     """)
-
+c.execute("""
+CREATE TABLE IF NOT EXISTS private_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT,
+    receiver TEXT,
+    message TEXT
+)
+""")
     conn.commit()
     conn.close()
 
