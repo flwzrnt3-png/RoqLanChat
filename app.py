@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 os.makedirs("static/profiles", exist_ok=True)
 
+
 def init_db():
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
@@ -42,7 +43,9 @@ def init_db():
     conn.commit()
     conn.close()
 
+
 init_db()
+
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -61,7 +64,6 @@ def login():
         )
 
         user = c.fetchone()
-
         conn.close()
 
         if user:
@@ -71,10 +73,11 @@ def login():
 
     return render_template("login.html")
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
 
-if request.method == "POST":
+    if request.method == "POST":
 
         username = request.form.get("username", "")
         password = request.form.get("password", "")
@@ -99,33 +102,33 @@ if request.method == "POST":
         try:
 
             c.execute(
-    """
-    INSERT INTO users
-    (username,full_name,email,password,birth_date,profile_pic)
-    VALUES (?,?,?,?,?,?)
-    """,
-    (
-        username,
-        full_name,
-        email,
-        password,
-        birth_date,
-        filename
-    )
+                """
+                INSERT INTO users
+                (username, full_name, email, password, birth_date, profile_pic)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    username,
+                    full_name,
+                    email,
+                    password,
+                    birth_date,
+                    filename
+                )
             )
 
             conn.commit()
 
-        except:
-
+        except Exception:
             conn.close()
-            return "اسم المستخدم موجود مسبقاً"
+            return "اسم المستخدم أو البريد مستخدم مسبقاً"
 
         conn.close()
 
         return redirect("/")
 
     return render_template("register.html")
+
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
@@ -142,14 +145,14 @@ def chat():
         if msg:
 
             c.execute(
-                "INSERT INTO messages (username,message) VALUES (?,?)",
+                "INSERT INTO messages (username, message) VALUES (?, ?)",
                 (username, msg)
             )
 
             conn.commit()
 
     c.execute(
-        "SELECT username,message FROM messages ORDER BY id ASC"
+        "SELECT username, message FROM messages ORDER BY id ASC"
     )
 
     messages = c.fetchall()
@@ -175,6 +178,7 @@ def chat():
         profile_pic=profile_pic
     )
 
+
 @app.route("/private", methods=["GET", "POST"])
 def private_chat():
 
@@ -191,21 +195,28 @@ def private_chat():
         if msg:
 
             c.execute(
-                "INSERT INTO private_messages (sender,receiver,message) VALUES (?,?,?)",
+                """
+                INSERT INTO private_messages
+                (sender, receiver, message)
+                VALUES (?, ?, ?)
+                """,
                 (sender, receiver, msg)
             )
 
             conn.commit()
 
-    c.execute("""
-    SELECT sender,receiver,message
-    FROM private_messages
-    WHERE
-    (sender=? AND receiver=?)
-    OR
-    (sender=? AND receiver=?)
-    ORDER BY id ASC
-    """, (sender, receiver, receiver, sender))
+    c.execute(
+        """
+        SELECT sender, receiver, message
+        FROM private_messages
+        WHERE
+        (sender=? AND receiver=?)
+        OR
+        (sender=? AND receiver=?)
+        ORDER BY id ASC
+        """,
+        (sender, receiver, receiver, sender)
+    )
 
     messages = c.fetchall()
 
@@ -217,6 +228,7 @@ def private_chat():
         sender=sender,
         receiver=receiver
     )
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
