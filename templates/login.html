@@ -1,78 +1,187 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html lang="ar" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
-<title>تسجيل الدخول - RoqLan Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NOVIQ</title>
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
 body{
-background:#0b0b0b;
-font-family:Arial;
+height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
-margin:0;
+background:
+radial-gradient(circle at top left,#5b21ff 0%,transparent 35%),
+radial-gradient(circle at bottom right,#006eff 0%,transparent 35%),
+#040816;
 color:white;
+overflow:hidden;
 }
 
-.box{
-width:340px;
-}
-
-h1{
+.container{
+width:90%;
+max-width:430px;
 text-align:center;
-margin-bottom:25px;
+}
+
+.logo-box{
+margin-bottom:35px;
+}
+
+.logo{
+width:130px;
+height:130px;
+margin:auto;
+border-radius:30px;
+background:linear-gradient(135deg,#25b8ff,#8a2eff);
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:70px;
+font-weight:bold;
+box-shadow:0 0 35px rgba(118,77,255,.45);
+}
+
+.app-name{
+font-size:52px;
+font-weight:bold;
+letter-spacing:5px;
+margin-top:20px;
+}
+
+.en{
+margin-top:10px;
+font-size:18px;
+color:#d7d7d7;
+}
+
+.ar{
+margin-top:12px;
+font-size:17px;
+color:#9f9f9f;
+}
+
+form{
+margin-top:35px;
 }
 
 input{
 width:100%;
-padding:14px;
-margin-bottom:12px;
-background:#1e1e1e;
-border:1px solid #333;
-border-radius:12px;
+padding:16px;
+margin-bottom:15px;
+background:#111827;
+border:1px solid #24324a;
+border-radius:18px;
 color:white;
-box-sizing:border-box;
+font-size:15px;
 }
 
-button{
+input:focus{
+outline:none;
+border-color:#8a2eff;
+}
+
+.login-btn{
 width:100%;
-padding:14px;
-background:#0095f6;
+padding:18px;
 border:none;
-border-radius:12px;
-color:white;
-font-size:16px;
+border-radius:20px;
+font-size:18px;
+font-weight:bold;
 cursor:pointer;
+background:linear-gradient(90deg,#1ea7ff,#8a2eff);
+color:white;
+margin-bottom:15px;
 }
 
-a{
-color:#0095f6;
+.register-btn{
+display:block;
+width:100%;
+padding:18px;
+border-radius:20px;
+border:2px solid #7044ff;
+text-decoration:none;
+color:white;
+font-size:18px;
+}
+
+.or{
+margin:25px 0;
+color:#999;
+}
+  .socials{
+display:flex;
+justify-content:center;
+gap:20px;
+}
+
+.social{
+width:60px;
+height:60px;
+border-radius:50%;
+background:#111827;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:28px;
+}
+
+.footer{
+margin-top:30px;
+font-size:14px;
+color:#9a9a9a;
+}
+
+.footer a{
+color:#2ea8ff;
 text-decoration:none;
 }
 
-.register-link{
-text-align:center;
-margin-top:15px;
-}
-
 </style>
+
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-<h1>❤️ RoqLan Chat</h1>
+<div class="logo-box">
+
+<div class="logo">
+N
+</div>
+
+<div class="app-name">
+NOVIQ
+</div>
+
+<div class="en">
+Chat. Share. Connect.
+</div>
+
+<div class="ar">
+تواصل بحرية • شارك لحظاتك • اكتشف عالمك
+</div>
+
+</div>
 
 <form method="POST">
 
 <input
 type="text"
 name="username"
-placeholder="اسم المستخدم"
+placeholder="اسم المستخدم أو البريد الإلكتروني"
 required>
 
 <input
@@ -81,14 +190,40 @@ name="password"
 placeholder="كلمة المرور"
 required>
 
-<button type="submit">
+<button class="login-btn" type="submit">
 تسجيل الدخول
 </button>
 
 </form>
 
-<div class="register-link">
-<a href="/register">إنشاء حساب جديد</a>
+<a href="/register" class="register-btn">
+إنشاء حساب جديد
+</a>
+
+<div class="or">
+أو
+</div>
+
+<div class="socials">
+
+<div class="social">G</div>
+
+<div class="social"></div>
+
+<div class="social">f</div>
+
+</div>
+
+<div class="footer">
+
+<a href="/forgot-password">
+نسيت كلمة المرور؟
+</a>
+
+<br><br>
+
+باستخدام NOVIQ فإنك توافق على شروط الخدمة وسياسة الخصوصية
+
 </div>
 
 </div>
