@@ -1,78 +1,136 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>إنشاء حساب - RoqLan Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>إنشاء حساب - ROVIQ</title>
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
 body{
-background:#0f0f0f;
-font-family:Arial;
-color:white;
+background:linear-gradient(135deg,#020617,#000814,#0a2472);
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
-margin:0;
+padding:20px;
 }
 
 .box{
-width:340px;
+width:100%;
+max-width:420px;
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,0.1);
+border-radius:24px;
+padding:30px;
+box-shadow:0 0 30px rgba(0,140,255,.2);
 }
 
-h1{
+.logo{
 text-align:center;
+font-size:42px;
+font-weight:bold;
+margin-bottom:10px;
+color:white;
+}
+
+.subtitle{
+text-align:center;
+color:#aaa;
 margin-bottom:25px;
 }
 
 input{
 width:100%;
-padding:14px;
+padding:15px;
 margin-bottom:12px;
-background:#1e1e1e;
-border:1px solid #333;
-border-radius:12px;
+border:none;
+outline:none;
+border-radius:14px;
+background:#0f172a;
 color:white;
-box-sizing:border-box;
+font-size:15px;
+border:1px solid rgba(255,255,255,.08);
+}
+
+input:focus{
+border-color:#4f46e5;
+}
+
+.file{
+background:#111827;
+padding:12px;
 }
 
 button{
 width:100%;
-padding:14px;
-background:#0095f6;
+padding:15px;
 border:none;
-border-radius:12px;
+border-radius:14px;
+background:linear-gradient(90deg,#38bdf8,#7c3aed);
 color:white;
-font-size:16px;
+font-size:17px;
+font-weight:bold;
 cursor:pointer;
+transition:.3s;
 }
 
-a{
-color:#0095f6;
-text-decoration:none;
+button:hover{
+transform:scale(1.02);
 }
 
 .login-link{
+margin-top:18px;
 text-align:center;
-margin-top:15px;
+}
+
+.login-link a{
+color:#60a5fa;
+text-decoration:none;
+}
+
+.login-link a:hover{
+text-decoration:underline;
 }
 
 </style>
-
 </head>
 <body>
 
 <div class="box">
 
-<h1>إنشاء حساب جديد</h1>
+<div class="logo">ROVIQ</div>
+
+<div class="subtitle">
+إنشاء حساب جديد
+</div>
 
 <form method="POST" enctype="multipart/form-data">
 
 <input
 type="text"
 name="username"
-placeholder="اسم المستخدم (اليوزر)"
+placeholder="اسم المستخدم"
+required>
+
+<input
+type="text"
+name="full_name"
+placeholder="الاسم الكامل">
+
+<input
+type="email"
+name="email"
+placeholder="البريد الإلكتروني"
 required>
 
 <input
@@ -87,17 +145,7 @@ name="birth_date"
 required>
 
 <input
-type="email"
-name="email"
-placeholder="البريد الإلكتروني"
-required>
-
-<input
-type="text"
-name="full_name"
-placeholder="الاسم الظاهر للناس">
-
-<input
+class="file"
 type="file"
 name="profile_pic"
 accept="image/*">
@@ -109,10 +157,12 @@ accept="image/*">
 </form>
 
 <div class="login-link">
-<a href="/">لديك حساب؟ تسجيل الدخول</a>
+<a href="/">
+لديك حساب؟ تسجيل الدخول
+</a>
 </div>
 
 </div>
 
 </body>
-    </html>
+</html>
