@@ -1,11 +1,3 @@
-from flask import Flask, request, redirect, render_template
-import sqlite3
-import os
-
-app = Flask(__name__)
-
-os.makedirs("static/profiles", exist_ok=True)
-
 def init_db():
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
@@ -26,14 +18,15 @@ def init_db():
         message TEXT
     )
     """)
-c.execute("""
-CREATE TABLE IF NOT EXISTS private_messages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sender TEXT,
-    receiver TEXT,
-    message TEXT
-   )
-   """)
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS private_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sender TEXT,
+        receiver TEXT,
+        message TEXT
+    )
+    """)
 
     conn.commit()
     conn.close()
