@@ -158,6 +158,48 @@ def chat():
         profile_pic=profile_pic
     )
 
+@app.route("/private", methods=["GET", "POST"])
+def private_chat():
 
+    sender = request.args.get("user", "")
+    receiver = request.args.get("to", "")
+
+    conn = sqlite3.connect("chat.db")
+    c = conn.cursor()
+
+    if request.method == "POST":
+
+        msg = request.form.get("msg", "")
+
+        if msg:
+
+            c.execute(
+                "INSERT INTO private_messages (sender,receiver,message) VALUES (?,?,?)",
+                (sender, receiver, msg)
+            )
+
+            conn.commit()
+
+    c.execute("""
+    SELECT sender,receiver,message
+    FROM private_messages
+    WHERE
+    (sender=? AND receiver=?)
+    OR
+    (sender=? AND receiver=?)
+    ORDER BY id ASC
+    """,
+    (sender, receiver, receiver, sender))
+
+    messages = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "private.html",
+        messages=messages,
+        sender=sender,
+        receiver=receiver
+            )
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
