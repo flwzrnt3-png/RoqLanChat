@@ -13,7 +13,7 @@ app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = "roviq.support@gmail.com"
-app.config["MAIL_PASSWORD"] = "ضع_App_Password_الجديد_هنا"
+app.config["MAIL_PASSWORD"] = "snsv lziu wozl nnzn"
 
 mail = Mail(app)
 
