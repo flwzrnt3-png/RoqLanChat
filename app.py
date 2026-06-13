@@ -123,7 +123,6 @@ def register_step2():
     return render_template("register_step2.html")
     @app.route("/register-step3", methods=["GET", "POST"])
 def register_step3():
-
     if "username" not in session:
         return redirect("/register")
 
