@@ -6,32 +6,18 @@ import os
 
 app = Flask(__name__)
 
-app.secret_key = "ROVIQ_SECRET_KEY_2026"
+app.secret_key = "ROVIQ_SECRET_KEY"
 
-# ------------------------
-# Gmail Settings
-# ------------------------
-
+# Gmail
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
-
 app.config["MAIL_USERNAME"] = "roviq.support@gmail.com"
-
 app.config["MAIL_PASSWORD"] = "cgmi gaiz tsvm nxah"
 
 mail = Mail(app)
 
-# ------------------------
-# Folders
-# ------------------------
-
 os.makedirs("static/profiles", exist_ok=True)
-
-# ------------------------
-# Database
-# ------------------------
-
 def init_db():
 
     conn = sqlite3.connect("chat.db")
@@ -40,21 +26,11 @@ def init_db():
     c.execute("""
     CREATE TABLE IF NOT EXISTS users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        display_name TEXT,
         username TEXT UNIQUE,
         email TEXT UNIQUE,
         password TEXT,
         birth_date TEXT,
-        profile_pic TEXT,
-        bio TEXT
-    )
-    """)
-
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS verification_codes(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT,
-        code TEXT
+        profile_pic TEXT
     )
     """)
 
@@ -70,7 +46,33 @@ def init_db():
     conn.close()
 
 init_db()
-@app.route("/register", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        conn = sqlite3.connect("chat.db")
+        c = conn.cursor()
+
+        c.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
+
+        user = c.fetchone()
+
+        conn.close()
+
+        if user:
+            return redirect(f"/chat?user={username}")
+
+        return "اسم المستخدم أو كلمة المرور غير صحيحة"
+
+    return render_template("login.html")
+    @app.route("/register", methods=["GET", "POST"])
 def register_step1():
 
     if request.method == "POST":
@@ -85,11 +87,11 @@ def register_step1():
             (username,)
         )
 
-        exists = c.fetchone()
+        user = c.fetchone()
 
         conn.close()
 
-        if exists:
+        if user:
             return "اسم المستخدم مستخدم مسبقاً"
 
         session["username"] = username
@@ -107,9 +109,7 @@ def register_step2():
 
     if request.method == "POST":
 
-        birth_date = request.form.get("birth_date", "")
-
-        session["birth_date"] = birth_date
+        session["birth_date"] = request.form.get("birth_date")
 
         return redirect("/register-step3")
 
@@ -122,7 +122,11 @@ def register_step3():
 
     if request.method == "POST":
 
-        password = request.form.get("password", "")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if password != confirm_password:
+            return "كلمتا المرور غير متطابقتين"
 
         session["password"] = password
 
@@ -191,17 +195,15 @@ def verify():
                     email,
                     password,
                     birth_date,
-                    full_name,
                     profile_pic
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?)
                 """,
                 (
                     session["username"],
                     session["email"],
                     session["password"],
                     session["birth_date"],
-                    "",
                     ""
                 )
             )
@@ -224,34 +226,42 @@ def verify():
     return render_template("verify.html")
 
 
-@app.route("/profile/<username>")
-def profile(username):
+@app.route("/chat", methods=["GET", "POST"])
+def chat():
+
+    username = request.args.get("user", "مستخدم")
 
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
+    if request.method == "POST":
+
+        msg = request.form.get("msg", "")
+
+        if msg:
+
+            c.execute(
+                "INSERT INTO messages (username, message) VALUES (?, ?)",
+                (username, msg)
+            )
+
+            conn.commit()
+
     c.execute(
-        """
-        SELECT
-        username,
-        email,
-        birth_date,
-        full_name,
-        profile_pic
-        FROM users
-        WHERE username=?
-        """,
-        (username,)
+        "SELECT username, message FROM messages ORDER BY id ASC"
     )
 
-    user = c.fetchone()
+    messages = c.fetchall()
 
     conn.close()
 
-    if not user:
-        return "المستخدم غير موجود"
-
     return render_template(
-        "profile.html",
-        user=user
-        )
+        "chat.html",
+        messages=messages,
+        current_user=username,
+        profile_pic=""
+    )
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
