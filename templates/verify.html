@@ -1,1 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>ROVIQ - تأكيد البريد</title>
+
+<style>
+body{
+background:#020617;
+color:white;
+font-family:Arial,sans-serif;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.box{
+width:90%;
+max-width:400px;
+background:#0f172a;
+padding:30px;
+border-radius:20px;
+text-align:center;
+}
+
+input{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:none;
+border-radius:12px;
+background:#1e293b;
+color:white;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:none;
+border-radius:12px;
+background:#2563eb;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div class="box">
+
+<h2>تأكيد البريد الإلكتروني</h2>
+
+<p>أدخل كود التفعيل المرسل إلى بريدك</p>
+
+<form method="POST">
+
+<input
+type="text"
+name="code"
+placeholder="كود التفعيل"
+required>
+
+<button type="submit">
+تأكيد
+</button>
+
+</form>
+
+</div>
+
+</body>
+  </html>
