@@ -21,7 +21,6 @@ os.makedirs("static/profiles", exist_ok=True)
 
 
 def init_db():
-
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
@@ -53,7 +52,6 @@ init_db()
 
 @app.route("/", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
 
         username = request.form.get("username")
@@ -68,7 +66,6 @@ def login():
         )
 
         user = c.fetchone()
-
         conn.close()
 
         if user:
@@ -81,7 +78,6 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register_step1():
-
     if request.method == "POST":
 
         username = request.form.get("username", "").strip()
@@ -89,11 +85,7 @@ def register_step1():
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
 
-        c.execute(
-            "SELECT id FROM users WHERE username=?",
-            (username,)
-        )
-
+        c.execute("SELECT id FROM users WHERE username=?", (username,))
         user = c.fetchone()
 
         conn.close()
@@ -102,7 +94,6 @@ def register_step1():
             return "اسم المستخدم مستخدم مسبقاً"
 
         session["username"] = username
-
         return redirect("/register-step2")
 
     return render_template("register_step1.html")
@@ -110,18 +101,17 @@ def register_step1():
 
 @app.route("/register-step2", methods=["GET", "POST"])
 def register_step2():
-
     if "username" not in session:
         return redirect("/register")
 
     if request.method == "POST":
-
         session["birth_date"] = request.form.get("birth_date")
-
         return redirect("/register-step3")
 
     return render_template("register_step2.html")
-    @app.route("/register-step3", methods=["GET", "POST"])
+
+
+@app.route("/register-step3", methods=["GET", "POST"])
 def register_step3():
     if "username" not in session:
         return redirect("/register")
@@ -135,7 +125,6 @@ def register_step3():
             return "كلمتا المرور غير متطابقتين"
 
         session["password"] = password
-
         return redirect("/register-step4")
 
     return render_template("register_step3.html")
@@ -143,7 +132,6 @@ def register_step3():
 
 @app.route("/register-step4", methods=["GET", "POST"])
 def register_step4():
-
     if "username" not in session:
         return redirect("/register")
 
@@ -157,7 +145,6 @@ def register_step4():
         session["verify_code"] = code
 
         try:
-
             msg = Message(
                 "ROVIQ Verification Code",
                 sender=app.config["MAIL_USERNAME"],
@@ -165,11 +152,9 @@ def register_step4():
             )
 
             msg.body = f"Your verification code is: {code}"
-
             mail.send(msg)
 
         except Exception as e:
-
             return f"خطأ بإرسال الكود: {e}"
 
         return redirect("/verify")
@@ -179,7 +164,6 @@ def register_step4():
 
 @app.route("/verify", methods=["GET", "POST"])
 def verify():
-
     if "verify_code" not in session:
         return redirect("/register")
 
@@ -193,26 +177,22 @@ def verify():
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
 
-        c.execute(
-            """
+        c.execute("""
             INSERT INTO users
             (username, email, password, birth_date, profile_pic)
             VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                session["username"],
-                session["email"],
-                session["password"],
-                session["birth_date"],
-                ""
-            )
-        )
+        """, (
+            session["username"],
+            session["email"],
+            session["password"],
+            session["birth_date"],
+            ""
+        ))
 
         conn.commit()
         conn.close()
 
         username = session["username"]
-
         session.clear()
 
         return redirect(f"/chat?user={username}")
@@ -222,7 +202,6 @@ def verify():
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
-
     username = request.args.get("user", "مستخدم")
 
     conn = sqlite3.connect("chat.db")
@@ -233,18 +212,13 @@ def chat():
         msg = request.form.get("msg", "")
 
         if msg:
-
             c.execute(
                 "INSERT INTO messages (username, message) VALUES (?, ?)",
                 (username, msg)
             )
-
             conn.commit()
 
-    c.execute(
-        "SELECT username, message FROM messages ORDER BY id ASC"
-    )
-
+    c.execute("SELECT username, message FROM messages ORDER BY id ASC")
     messages = c.fetchall()
 
     conn.close()
