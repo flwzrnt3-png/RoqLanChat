@@ -8,16 +8,19 @@ app = Flask(__name__)
 
 app.secret_key = "ROVIQ_SECRET_KEY"
 
-# Gmail
+# Gmail Settings
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = "roviq.support@gmail.com"
-app.config["MAIL_PASSWORD"] = "imzwdhtvccngeucp"
+app.config["MAIL_PASSWORD"] = "ضع_App_Password_الجديد_هنا"
 
 mail = Mail(app)
 
-os.makedirs("static/profiles", exist_ok=True)def init_db():
+os.makedirs("static/profiles", exist_ok=True)
+
+
+def init_db():
 
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
@@ -44,7 +47,11 @@ os.makedirs("static/profiles", exist_ok=True)def init_db():
     conn.commit()
     conn.close()
 
-init_db()@app.route("/", methods=["GET", "POST"])
+
+init_db()
+
+
+@app.route("/", methods=["GET", "POST"])
 def login():
 
     if request.method == "POST":
@@ -69,7 +76,10 @@ def login():
 
         return "اسم المستخدم أو كلمة المرور غير صحيحة"
 
-    return render_template("login.html")@app.route("/register", methods=["GET", "POST"])
+    return render_template("login.html")
+
+
+@app.route("/register", methods=["GET", "POST"])
 def register_step1():
 
     if request.method == "POST":
@@ -110,7 +120,8 @@ def register_step2():
 
         return redirect("/register-step3")
 
-    return render_template("register_step2.html")@app.route("/register-step3", methods=["GET", "POST"])
+    return render_template("register_step2.html")
+    @app.route("/register-step3", methods=["GET", "POST"])
 def register_step3():
 
     if "username" not in session:
@@ -164,7 +175,10 @@ def register_step4():
 
         return redirect("/verify")
 
-    return render_template("register_step4.html")@app.route("/verify", methods=["GET", "POST"])
+    return render_template("register_step4.html")
+
+
+@app.route("/verify", methods=["GET", "POST"])
 def verify():
 
     if "verify_code" not in session:
@@ -180,36 +194,22 @@ def verify():
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
 
-        try:
-
-            c.execute(
-                """
-                INSERT INTO users
-                (
-                    username,
-                    email,
-                    password,
-                    birth_date,
-                    profile_pic
-                )
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                (
-                    session["username"],
-                    session["email"],
-                    session["password"],
-                    session["birth_date"],
-                    ""
-                )
+        c.execute(
+            """
+            INSERT INTO users
+            (username, email, password, birth_date, profile_pic)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                session["username"],
+                session["email"],
+                session["password"],
+                session["birth_date"],
+                ""
             )
+        )
 
-            conn.commit()
-
-        except Exception as e:
-
-            conn.close()
-            return f"خطأ: {e}"
-
+        conn.commit()
         conn.close()
 
         username = session["username"]
