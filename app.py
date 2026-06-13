@@ -1,41 +1,67 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, render_template, request, redirect, session
+from flask_mail import Mail, Message
 import sqlite3
+import random
 import os
 
 app = Flask(__name__)
 
+app.secret_key = "ROVIQ_SECRET_KEY_2026"
+
+# ------------------------
+# Gmail Settings
+# ------------------------
+
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+
+app.config["MAIL_USERNAME"] = "roviq.support@gmail.com"
+
+app.config["MAIL_PASSWORD"] = "cgmi gaiz tsvm nxah"
+
+mail = Mail(app)
+
+# ------------------------
+# Folders
+# ------------------------
+
 os.makedirs("static/profiles", exist_ok=True)
 
+# ------------------------
+# Database
+# ------------------------
 
 def init_db():
+
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
     c.execute("""
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        display_name TEXT,
         username TEXT UNIQUE,
-        full_name TEXT,
         email TEXT UNIQUE,
         password TEXT,
         birth_date TEXT,
-        profile_pic TEXT
+        profile_pic TEXT,
+        bio TEXT
     )
     """)
 
     c.execute("""
-    CREATE TABLE IF NOT EXISTS messages (
+    CREATE TABLE IF NOT EXISTS verification_codes(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT,
+        code TEXT
+    )
+    """)
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS messages(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
-        message TEXT
-    )
-    """)
-
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS private_messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        sender TEXT,
-        receiver TEXT,
         message TEXT
     )
     """)
@@ -43,58 +69,114 @@ def init_db():
     conn.commit()
     conn.close()
 
-
 init_db()
-
-
-@app.route("/", methods=["GET", "POST"])
-def login():
+@app.route("/register", methods=["GET", "POST"])
+def register_step1():
 
     if request.method == "POST":
 
-        username = request.form.get("username", "")
-        password = request.form.get("password", "")
+        username = request.form.get("username", "").strip()
 
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
 
         c.execute(
-            "SELECT * FROM users WHERE username=? AND password=?",
-            (username, password)
+            "SELECT id FROM users WHERE username=?",
+            (username,)
         )
 
-        user = c.fetchone()
+        exists = c.fetchone()
+
         conn.close()
 
-        if user:
-            return redirect(f"/chat?user={username}")
+        if exists:
+            return "اسم المستخدم مستخدم مسبقاً"
 
-        return "اسم المستخدم أو كلمة المرور غير صحيحة"
+        session["username"] = username
 
-    return render_template("login.html")
+        return redirect("/register-step2")
+
+    return render_template("register_step1.html")
 
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
+@app.route("/register-step2", methods=["GET", "POST"])
+def register_step2():
+
+    if "username" not in session:
+        return redirect("/register")
 
     if request.method == "POST":
 
-        username = request.form.get("username", "")
-        password = request.form.get("password", "")
-        email = request.form.get("email", "")
         birth_date = request.form.get("birth_date", "")
-        full_name = request.form.get("full_name", "")
-        profile_pic = request.files.get("profile_pic")
 
-        filename = ""
+        session["birth_date"] = birth_date
 
-        if profile_pic and profile_pic.filename:
+        return redirect("/register-step3")
 
-            filename = profile_pic.filename
+    return render_template("register_step2.html")
+    @app.route("/register-step3", methods=["GET", "POST"])
+def register_step3():
 
-            profile_pic.save(
-                os.path.join("static/profiles", filename)
+    if "username" not in session:
+        return redirect("/register")
+
+    if request.method == "POST":
+
+        password = request.form.get("password", "")
+
+        session["password"] = password
+
+        return redirect("/register-step4")
+
+    return render_template("register_step3.html")
+
+
+@app.route("/register-step4", methods=["GET", "POST"])
+def register_step4():
+
+    if "username" not in session:
+        return redirect("/register")
+
+    if request.method == "POST":
+
+        email = request.form.get("email", "").strip()
+
+        code = str(random.randint(100000, 999999))
+
+        session["email"] = email
+        session["verify_code"] = code
+
+        try:
+
+            msg = Message(
+                "ROVIQ Verification Code",
+                sender=app.config["MAIL_USERNAME"],
+                recipients=[email]
             )
+
+            msg.body = f"Your verification code is: {code}"
+
+            mail.send(msg)
+
+        except Exception as e:
+
+            return f"خطأ بإرسال الكود: {e}"
+
+        return redirect("/verify")
+
+    return render_template("register_step4.html")
+    @app.route("/verify", methods=["GET", "POST"])
+def verify():
+
+    if "verify_code" not in session:
+        return redirect("/register")
+
+    if request.method == "POST":
+
+        code = request.form.get("code", "").strip()
+
+        if code != session["verify_code"]:
+            return "كود التحقق غير صحيح"
 
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
@@ -104,131 +186,72 @@ def register():
             c.execute(
                 """
                 INSERT INTO users
-                (username, full_name, email, password, birth_date, profile_pic)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
                 (
                     username,
-                    full_name,
                     email,
                     password,
                     birth_date,
-                    filename
+                    full_name,
+                    profile_pic
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    session["username"],
+                    session["email"],
+                    session["password"],
+                    session["birth_date"],
+                    "",
+                    ""
                 )
             )
 
             conn.commit()
 
-        except Exception:
+        except Exception as e:
+
             conn.close()
-            return "اسم المستخدم أو البريد مستخدم مسبقاً"
+            return f"خطأ: {e}"
 
         conn.close()
 
-        return redirect("/")
+        username = session["username"]
 
-    return render_template("register.html")
+        session.clear()
 
+        return redirect(f"/chat?user={username}")
 
-@app.route("/chat", methods=["GET", "POST"])
-def chat():
-
-    username = request.args.get("user", "مستخدم")
-
-    conn = sqlite3.connect("chat.db")
-    c = conn.cursor()
-
-    if request.method == "POST":
-
-        msg = request.form.get("msg", "")
-
-        if msg:
-
-            c.execute(
-                "INSERT INTO messages (username, message) VALUES (?, ?)",
-                (username, msg)
-            )
-
-            conn.commit()
-
-    c.execute(
-        "SELECT username, message FROM messages ORDER BY id ASC"
-    )
-
-    messages = c.fetchall()
-
-    c.execute(
-        "SELECT profile_pic FROM users WHERE username=?",
-        (username,)
-    )
-
-    user_data = c.fetchone()
-
-    profile_pic = ""
-
-    if user_data:
-        profile_pic = user_data[0]
-
-    conn.close()
-
-    return render_template(
-        "chat.html",
-        messages=messages,
-        current_user=username,
-        profile_pic=profile_pic
-    )
+    return render_template("verify.html")
 
 
-@app.route("/private", methods=["GET", "POST"])
-def private_chat():
-
-    sender = request.args.get("user", "")
-    receiver = request.args.get("to", "")
+@app.route("/profile/<username>")
+def profile(username):
 
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
-
-    if request.method == "POST":
-
-        msg = request.form.get("msg", "")
-
-        if msg:
-
-            c.execute(
-                """
-                INSERT INTO private_messages
-                (sender, receiver, message)
-                VALUES (?, ?, ?)
-                """,
-                (sender, receiver, msg)
-            )
-
-            conn.commit()
 
     c.execute(
         """
-        SELECT sender, receiver, message
-        FROM private_messages
-        WHERE
-        (sender=? AND receiver=?)
-        OR
-        (sender=? AND receiver=?)
-        ORDER BY id ASC
+        SELECT
+        username,
+        email,
+        birth_date,
+        full_name,
+        profile_pic
+        FROM users
+        WHERE username=?
         """,
-        (sender, receiver, receiver, sender)
+        (username,)
     )
 
-    messages = c.fetchall()
+    user = c.fetchone()
 
     conn.close()
 
+    if not user:
+        return "المستخدم غير موجود"
+
     return render_template(
-        "private.html",
-        messages=messages,
-        sender=sender,
-        receiver=receiver
-    )
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+        "profile.html",
+        user=user
+        )
