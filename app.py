@@ -17,8 +17,7 @@ app.config["MAIL_PASSWORD"] = "cgmi gaiz tsvm nxah"
 
 mail = Mail(app)
 
-os.makedirs("static/profiles", exist_ok=True)
-def init_db():
+os.makedirs("static/profiles", exist_ok=True)def init_db():
 
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
@@ -45,8 +44,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()
-@app.route("/", methods=["GET", "POST"])
+init_db()@app.route("/", methods=["GET", "POST"])
 def login():
 
     if request.method == "POST":
@@ -71,8 +69,7 @@ def login():
 
         return "اسم المستخدم أو كلمة المرور غير صحيحة"
 
-    return render_template("login.html")
-    @app.route("/register", methods=["GET", "POST"])
+    return render_template("login.html")@app.route("/register", methods=["GET", "POST"])
 def register_step1():
 
     if request.method == "POST":
@@ -113,8 +110,7 @@ def register_step2():
 
         return redirect("/register-step3")
 
-    return render_template("register_step2.html")
-    @app.route("/register-step3", methods=["GET", "POST"])
+    return render_template("register_step2.html")@app.route("/register-step3", methods=["GET", "POST"])
 def register_step3():
 
     if "username" not in session:
@@ -168,8 +164,7 @@ def register_step4():
 
         return redirect("/verify")
 
-    return render_template("register_step4.html")
-    @app.route("/verify", methods=["GET", "POST"])
+    return render_template("register_step4.html")@app.route("/verify", methods=["GET", "POST"])
 def verify():
 
     if "verify_code" not in session:
