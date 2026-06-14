@@ -52,7 +52,7 @@ def send_verification_email(to_email, code):
         msg["To"] = to_email
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login("roviq.support@gmail.com", "brcn pnrg auoo hrab")  # استبدل APP_PASSWORD بكلمة مرور التطبيق
+            server.login("roviq.support@gmail.com", "brcnpnrgauoohrab")  # استبدل APP_PASSWORD بكلمة مرور التطبيق
             server.send_message(msg)
 
         print("✅ Email sent successfully to:", to_email)
