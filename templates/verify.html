@@ -3,79 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>ROVIQ - تأكيد البريد</title>
-
+<title>ROVIQ - التحقق</title>
 <style>
-body{
-background:#020617;
-color:white;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial,sans-serif;
+}
+body{
+height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
-margin:0;
+background:
+radial-gradient(circle at top left,#6a00ff 0%,transparent 35%),
+radial-gradient(circle at bottom right,#008cff 0%,transparent 35%),
+#020617;
+color:white;
+overflow:hidden;
 }
-
-.box{
+.container{
 width:90%;
-max-width:400px;
-background:#0f172a;
-padding:30px;
-border-radius:20px;
+max-width:420px;
 text-align:center;
 }
-
+.logo{
+width:100px;
+height:100px;
+margin:auto;
+border-radius:28px;
+background:linear-gradient(135deg,#1ea7ff,#8a2eff);
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:55px;
+font-weight:bold;
+color:white;
+box-shadow:
+0 0 35px rgba(138,46,255,.7),
+0 0 60px rgba(30,167,255,.5);
+}
+.app-name{
+font-size:28px;
+font-weight:bold;
+letter-spacing:3px;
+margin-top:12px;
+margin-bottom:25px;
+}
+form{
+margin-top:10px;
+}
 input{
 width:100%;
-padding:15px;
-margin-top:15px;
-border:none;
-border-radius:12px;
-background:#1e293b;
-color:white;
-box-sizing:border-box;
-}
-
-button{
-width:100%;
-padding:15px;
-margin-top:15px;
-border:none;
-border-radius:12px;
-background:#2563eb;
+padding:18px;
+margin-bottom:16px;
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.08);
+border-radius:18px;
 color:white;
 font-size:16px;
+}
+input:focus{
+outline:none;
+border-color:#8a2eff;
+}
+.verify-btn{
+width:100%;
+padding:18px;
+border:none;
+border-radius:20px;
+font-size:20px;
 font-weight:bold;
 cursor:pointer;
+background:linear-gradient(90deg,#1ea7ff,#8a2eff);
+color:white;
+}
+.resend{
+margin-top:20px;
+}
+.resend a{
+color:#3db2ff;
+text-decoration:none;
+font-size:15px;
 }
 </style>
-
 </head>
 <body>
-
-<div class="box">
-
-<h2>تأكيد البريد الإلكتروني</h2>
-
-<p>أدخل كود التفعيل المرسل إلى بريدك</p>
-
+<div class="container">
+<div class="logo">R</div>
+<div class="app-name">ROVIQ</div>
+<h2>تحقق من بريدك الإلكتروني</h2>
+<p>تم إرسال كود التحقق إلى بريدك: {{ session['email'] }}</p>
 <form method="POST">
-
-<input
-type="text"
-name="code"
-placeholder="كود التفعيل"
-required>
-
-<button type="submit">
-تأكيد
-</button>
-
+<input type="text" name="code" placeholder="أدخل الكود هنا" required>
+<button class="verify-btn" type="submit">تأكيد</button>
 </form>
-
+<div class="resend">
+<p>لم يصلك الكود؟ <a href="/register-step4">إعادة الإرسال</a></p>
 </div>
-
+</div>
 </body>
-  </html>
+</html>
