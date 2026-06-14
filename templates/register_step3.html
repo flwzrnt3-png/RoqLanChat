@@ -1,33 +1,356 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>ROVIQ - كلمة المرور</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+
+background:
+linear-gradient(
+135deg,
+#020617,
+#071a52,
+#4f46e5
+);
+
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:20px;
+
+}
+
+.box{
+
+width:100%;
+max-width:430px;
+
+background:rgba(255,255,255,.05);
+
+backdrop-filter:blur(20px);
+
+border:1px solid rgba(255,255,255,.1);
+
+border-radius:30px;
+
+padding:35px;
+
+box-shadow:
+0 0 40px rgba(79,70,229,.35);
+
+}
+
+.logo{
+
+font-size:52px;
+font-weight:bold;
+color:white;
+
+text-align:center;
+
+margin-bottom:10px;
+
+}
+
+.step{
+
+text-align:center;
+
+color:#60a5fa;
+
+font-size:14px;
+
+margin-bottom:10px;
+
+}
+
+.title{
+
+text-align:center;
+
+color:white;
+
+font-size:30px;
+
+font-weight:bold;
+
+margin-bottom:10px;
+
+}
+
+.desc{
+
+text-align:center;
+
+color:#b8c0d4;
+
+margin-bottom:30px;
+
+line-height:1.8;
+
+}
+
+input{
+
+width:100%;
+
+padding:18px;
+
+border:none;
+
+outline:none;
+
+border-radius:18px;
+
+background:#0f172a;
+
+color:white;
+
+font-size:18px;
+
+border:2px solid transparent;
+
+margin-bottom:15px;
+
+}
+
+input:focus{
+
+border-color:#4f46e5;
+
+}
+
+.strength{
+
+text-align:center;
+
+font-size:15px;
+
+margin-bottom:15px;
+
+font-weight:bold;
+
+}
+
+.error{
+
+color:#ff6b6b;
+
+font-size:14px;
+
+margin-bottom:15px;
+
+text-align:center;
+
+}
+
+.rules{
+
+color:#9ca3af;
+
+font-size:13px;
+
+line-height:2;
+
+margin-bottom:20px;
+
+}
+
+button{
+
+width:100%;
+
+padding:18px;
+
+border:none;
+
+border-radius:18px;
+
+cursor:pointer;
+
+font-size:20px;
+
+font-weight:bold;
+
+color:white;
+
+background:
+
+linear-gradient(
+90deg,
+#38bdf8,
+#4f46e5,
+#7c3aed
+);
+
+}
+
+</style>
+
 </head>
 <body>
 
-<h1>الخطوة الثالثة</h1>
+<div class="box">
 
-<form method="POST">
+<div class="logo">
+ROVIQ
+</div>
+
+<div class="step">
+STEP 3 OF 5
+</div>
+
+<div class="title">
+إنشاء كلمة المرور
+</div>
+
+<div class="desc">
+احمِ حسابك بكلمة مرور قوية
+</div>
+
+<form method="POST" id="form">
 
 <input
 type="password"
+id="password"
 name="password"
 placeholder="كلمة المرور"
 required>
 
+<div id="strength" class="strength">
+</div>
+
 <input
 type="password"
+id="confirm_password"
 name="confirm_password"
 placeholder="تأكيد كلمة المرور"
 required>
 
+<div id="error" class="error"></div>
+
+<div class="rules">
+
+• 8 أحرف أو أكثر<br>
+
+• حرف كبير واحد على الأقل<br>
+
+• حرف صغير واحد على الأقل<br>
+
+• رقم واحد على الأقل
+
+</div>
+
 <button type="submit">
-التالي
+التالي →
 </button>
 
 </form>
+
+</div>
+
+<script>
+
+const password =
+document.getElementById("password");
+
+const strength =
+document.getElementById("strength");
+
+password.addEventListener("input", function(){
+
+let value = password.value;
+
+let score = 0;
+
+if(value.length >= 8) score++;
+if(/[A-Z]/.test(value)) score++;
+if(/[a-z]/.test(value)) score++;
+if(/[0-9]/.test(value)) score++;
+
+if(score <= 1){
+
+strength.innerHTML =
+"🔴 ضعيفة";
+
+strength.style.color =
+"#ff6b6b";
+
+}
+else if(score <= 3){
+
+strength.innerHTML =
+"🟠 متوسطة";
+
+strength.style.color =
+"#f59e0b";
+
+}
+else{
+
+strength.innerHTML =
+"🟢 قوية";
+
+strength.style.color =
+"#22c55e";
+
+}
+
+});
+
+document
+.getElementById("form")
+.addEventListener("submit", function(e){
+
+let pass =
+document.getElementById("password").value;
+
+let confirm =
+document.getElementById("confirm_password").value;
+
+if(pass !== confirm){
+
+e.preventDefault();
+
+document
+.getElementById("error")
+.innerHTML =
+"كلمتا المرور غير متطابقتين";
+
+return;
+
+}
+
+if(pass.length < 8){
+
+e.preventDefault();
+
+document
+.getElementById("error")
+.innerHTML =
+"كلمة المرور قصيرة جداً";
+
+}
+
+});
+
+</script>
 
 </body>
 </html>
