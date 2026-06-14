@@ -48,11 +48,11 @@ def send_verification_email(to_email, code):
     try:
         msg = MIMEText(f"كود التحقق الخاص بك هو: {code}")
         msg["Subject"] = "كود التحقق من البريد"
-        msg["From"] = "roviq.support@gmail.com"
+        msg["From"] = "majdrhym573@gmail.com"
         msg["To"] = to_email
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login("roviq.support@gmail.com", "brcnpnrgauoohrab")  # استبدل APP_PASSWORD بكلمة مرور التطبيق
+            server.login("majdrhym573@gmail.com", "pwaoeityfmumzdem")  # استبدل APP_PASSWORD بكلمة مرور التطبيق
             server.send_message(msg)
 
         print("✅ Email sent successfully to:", to_email)
