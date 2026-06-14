@@ -42,7 +42,7 @@ def init_db():
 init_db()
 
 
-# ✉️ دالة إرسال البريد إلى تريمكس
+# ✉️ دالة إرسال البريد والكود إلى تريمكس
 def send_verification_email(to_email, code):
     try:
         # غيّر الـ IP حسب جهازك إذا مو نفس هذا
