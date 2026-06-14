@@ -43,16 +43,24 @@ def init_db():
 init_db()
 
 
-# ✉️ دالة إرسال البريد
+# ✉️ دالة إرسال البريد مع معالجة الأخطاء
 def send_verification_email(to_email, code):
-    msg = MIMEText(f"كود التحقق الخاص بك هو: {code}")
-    msg["Subject"] = "كود التحقق من البريد"
-    msg["From"] = "roviq.support@gmail.com"   # بريد التطبيق
-    msg["To"] = to_email
+    try:
+        msg = MIMEText(f"كود التحقق الخاص بك هو: {code}")
+        msg["Subject"] = "كود التحقق من البريد"
+        msg["From"] = "roviq.support@gmail.com"
+        msg["To"] = to_email
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login("roviq.support@gmail.com", "brcn pnrg auoo hrab")  # كلمة مرور التطبيق (App Password)
-        server.send_message(msg)
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login("roviq.support@gmail.com", "brcn pnrg auoo hrab")  # استبدل APP_PASSWORD بكلمة مرور التطبيق
+            server.send_message(msg)
+
+        print("✅ Email sent successfully to:", to_email)
+
+    except Exception as e:
+        print("❌ Email send error:", e)   # يطبع الخطأ بالـ terminal
+        # ما نخلي السيرفر ينهار، نرجع رسالة واضحة
+        raise Exception("فشل إرسال البريد الإلكتروني، تأكد من إعدادات Gmail وكلمة مرور التطبيق.")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -183,6 +191,19 @@ def verify():
         return redirect(url_for("chat"))
 
     return render_template("verify.html")
+
+
+@app.route("/resend-code")
+def resend_code():
+    if "email" not in session or "username" not in session:
+        return redirect("/register")
+
+    code = str(random.randint(100000, 999999))
+    session["verify_code"] = code
+
+    send_verification_email(session["email"], code)
+
+    return redirect("/verify")
 
 
 @app.route("/chat", methods=["GET", "POST"])
