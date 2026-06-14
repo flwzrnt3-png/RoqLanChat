@@ -58,6 +58,7 @@ def login():
         password = request.form.get("password")
 
     try:
+        
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
@@ -80,7 +81,6 @@ except Exception as e:
 
     return f"DATABASE ERROR: {e}"
         
-
             "SELECT * FROM users WHERE username=? AND password=?",
             (username, password)
         )
