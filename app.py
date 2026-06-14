@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import random
 import smtplib
 from email.mime.text import MIMEText
+import traceback
 
 app = Flask(__name__)
 app.secret_key = "ROVIQ_SECRET_KEY"
@@ -43,7 +44,7 @@ def init_db():
 init_db()
 
 
-# ✉️ دالة إرسال البريد مع معالجة الأخطاء
+# ✉️ دالة إرسال البريد مع طباعة الأخطاء
 def send_verification_email(to_email, code):
     try:
         msg = MIMEText(f"كود التحقق الخاص بك هو: {code}")
@@ -58,9 +59,9 @@ def send_verification_email(to_email, code):
         print("✅ Email sent successfully to:", to_email)
 
     except Exception as e:
-        print("❌ Email send error:", e)   # يطبع الخطأ بالـ terminal
-        # ما نخلي السيرفر ينهار، نرجع رسالة واضحة
-        raise Exception("فشل إرسال البريد الإلكتروني، تأكد من إعدادات Gmail وكلمة مرور التطبيق.")
+        print("❌ Email send error:", e)
+        traceback.print_exc()   # يطبع تفاصيل الخطأ كاملة
+        raise e
 
 
 @app.route("/", methods=["GET", "POST"])
