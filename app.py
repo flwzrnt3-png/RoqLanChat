@@ -233,6 +233,29 @@ def chat():
         current_user=username,
         profile_pic=""
     )
+    
+@app.route("/profile")
+def profile():
+
+    username = request.args.get("user")
+
+    conn = sqlite3.connect("chat.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT username,email,birth_date,profile_pic
+    FROM users
+    WHERE username=?
+    """,(username,))
+
+    user = c.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "profile.html",
+        user=user
+    )
 
 
 if __name__ == "__main__":
