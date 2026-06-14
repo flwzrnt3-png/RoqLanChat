@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ROVIQ Chat V4</title>
+<title>ROVIQ Chat V5</title>
 
 <style>
 
@@ -23,6 +23,11 @@ color:white;
 display:flex;
 flex-direction:column;
 overflow:hidden;
+}
+
+a{
+text-decoration:none;
+color:inherit;
 }
 
 .header{
@@ -222,6 +227,8 @@ transform:translateY(0);
 
 <div class="left">
 
+<a href="/profile?user={{ current_user }}">
+
 {% if profile_pic %}
 
 <img class="profile" src="/static/profiles/{{ profile_pic }}">
@@ -233,6 +240,8 @@ transform:translateY(0);
 </div>
 
 {% endif %}
+
+</a>
 
 <div class="userinfo">
 
@@ -255,7 +264,8 @@ ROVIQ
 </div>
 
 <div class="messages" id="messages">
-  {% for user,text in messages %}
+
+{% for user,text in messages %}
 
 {% if user == current_user %}
 
@@ -302,7 +312,6 @@ ROVIQ
 {% endfor %}
 
 </div>
-
 <div class="bottom">
 
 <form method="POST" class="chat-form">
@@ -328,8 +337,13 @@ type="submit">
 </div>
 
 <script>
-const messages=document.getElementById("messages");
-messages.scrollTop=messages.scrollHeight;
+
+const messages =
+document.getElementById("messages");
+
+messages.scrollTop =
+messages.scrollHeight;
+
 </script>
 
 </body>
