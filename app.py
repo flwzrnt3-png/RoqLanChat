@@ -58,7 +58,6 @@ def login():
         password = request.form.get("password")
 
     try:
-
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
