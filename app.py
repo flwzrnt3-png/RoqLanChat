@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
-import secrets
+import random
 import smtplib
 from email.mime.text import MIMEText
 
@@ -140,9 +140,10 @@ def register_step4():
         email = request.form.get("email", "").strip()
         session["email"] = email
 
-        # توليد كود عشوائي وإرساله بالبريد
-        code = secrets.token_hex(3)
+        # توليد كود تحقق مكوّن من 6 أرقام
+        code = str(random.randint(100000, 999999))
         session["verify_code"] = code
+
         send_verification_email(email, code)
 
         return redirect("/verify")
