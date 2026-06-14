@@ -3,9 +3,7 @@ import sqlite3
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 import random
-import smtplib
-from email.mime.text import MIMEText
-import traceback
+import requests   # ✅ بدل smtplib حتى يرسل لتريمكس
 
 app = Flask(__name__)
 app.secret_key = "ROVIQ_SECRET_KEY"
@@ -44,24 +42,14 @@ def init_db():
 init_db()
 
 
-# ✉️ دالة إرسال البريد مع طباعة الأخطاء
+# ✉️ دالة إرسال البريد إلى تريمكس
 def send_verification_email(to_email, code):
     try:
-        msg = MIMEText(f"كود التحقق الخاص بك هو: {code}")
-        msg["Subject"] = "كود التحقق من البريد"
-        msg["From"] = "majdrhym573@gmail.com"
-        msg["To"] = to_email
-
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login("majdrhym573@gmail.com", "pwaoeityfmumzdem")  # استبدل APP_PASSWORD بكلمة مرور التطبيق
-            server.send_message(msg)
-
-        print("✅ Email sent successfully to:", to_email)
-
+        TERMUX_API = "http://127.0.0.1:5000/receive_email"  # أو غيّرها إلى IP جهازك مثل 192.168.1.101
+        requests.post(TERMUX_API, json={"email": to_email, "code": code})
+        print("📬 البريد وصل لتريمكس:", to_email, "| 🔑 الكود:", code)
     except Exception as e:
-        print("❌ Email send error:", e)
-        traceback.print_exc()   # يطبع تفاصيل الخطأ كاملة
-        raise e
+        print("❌ خطأ بالاتصال مع تريمكس:", e)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -153,6 +141,7 @@ def register_step4():
         code = str(random.randint(100000, 999999))
         session["verify_code"] = code
 
+        # يرسل البريد والكود إلى تريمكس
         send_verification_email(email, code)
 
         return redirect("/verify")
@@ -202,6 +191,7 @@ def resend_code():
     code = str(random.randint(100000, 999999))
     session["verify_code"] = code
 
+    # يرسل البريد والكود إلى تريمكس
     send_verification_email(session["email"], code)
 
     return redirect("/verify")
