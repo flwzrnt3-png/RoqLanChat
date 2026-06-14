@@ -57,10 +57,31 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        conn = sqlite3.connect("chat.db")
-        c = conn.cursor()
+        try:
 
-        c.execute(
+    conn = sqlite3.connect("chat.db")
+    c = conn.cursor()
+
+    c.execute("""
+        INSERT INTO users
+        (username, email, password, birth_date, profile_pic)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        session["username"],
+        session["email"],
+        session["password"],
+        session["birth_date"],
+        ""
+    ))
+
+    conn.commit()
+    conn.close()
+
+except Exception as e:
+
+    return f"DATABASE ERROR: {e}"
+        
+
             "SELECT * FROM users WHERE username=? AND password=?",
             (username, password)
         )
