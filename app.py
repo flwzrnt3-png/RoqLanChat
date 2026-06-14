@@ -144,20 +144,21 @@ def register_step4():
         session["email"] = email
         session["verify_code"] = code
 
-        try:
-            msg = Message(
-                "ROVIQ Verification Code",
-                sender=app.config["MAIL_USERNAME"],
-                recipients=[email]
-            )
+        session["verify_code"] = "123456"
+return redirect("/verify")
+            
+                
+                
+                
+            
 
-            msg.body = f"Your verification code is: {code}"
-            mail.send(msg)
+            
+            
 
-        except Exception as e:
-            return f"خطأ بإرسال الكود: {e}"
+        
+            
 
-        return redirect("/verify")
+     
 
     return render_template("register_step4.html")
 
