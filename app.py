@@ -45,7 +45,8 @@ init_db()
 # ✉️ دالة إرسال البريد إلى تريمكس
 def send_verification_email(to_email, code):
     try:
-        TERMUX_API = "http://127.0.0.1:5000/receive_email"  # أو غيّرها إلى IP جهازك مثل 192.168.1.101
+        # غيّر الـ IP حسب جهازك إذا مو نفس هذا
+        TERMUX_API = "http://192.168.1.101:5000/receive_email"
         requests.post(TERMUX_API, json={"email": to_email, "code": code})
         print("📬 البريد وصل لتريمكس:", to_email, "| 🔑 الكود:", code)
     except Exception as e:
