@@ -1,21 +1,9 @@
 from flask import Flask, render_template, request, redirect, session
-from flask_mail import Mail, Message
 import sqlite3
-import random
 import os
 
 app = Flask(__name__)
-
 app.secret_key = "ROVIQ_SECRET_KEY"
-
-# Gmail Settings
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 587
-app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = "roviq.support@gmail.com"
-app.config["MAIL_PASSWORD"] = "valfdjavqhqwtfyi"
-
-mail = Mail(app)
 
 os.makedirs("static/profiles", exist_ok=True)
 
@@ -52,40 +40,22 @@ init_db()
 
 @app.route("/", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
 
         username = request.form.get("username")
         password = request.form.get("password")
-        
-     try:
 
-    conn = sqlite3.connect("chat.db")
-    c = conn.cursor()
+        conn = sqlite3.connect("chat.db")
+        c = conn.cursor()
 
-    c.execute("""
-        INSERT INTO users
-        (username, email, password, birth_date, profile_pic)
-        VALUES (?, ?, ?, ?, ?)
-    """, (
-        session["username"],
-        session["email"],
-        session["password"],
-        session["birth_date"],
-        ""
-    ))
-
-    conn.commit()
-    conn.close()
-
-except Exception as e:
-
-    return f"DATABASE ERROR: {e}"
-        
+        c.execute(
             "SELECT * FROM users WHERE username=? AND password=?",
             (username, password)
         )
 
         user = c.fetchone()
+
         conn.close()
 
         if user:
@@ -98,6 +68,7 @@ except Exception as e:
 
 @app.route("/register", methods=["GET", "POST"])
 def register_step1():
+
     if request.method == "POST":
 
         username = request.form.get("username", "").strip()
@@ -105,7 +76,11 @@ def register_step1():
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
 
-        c.execute("SELECT id FROM users WHERE username=?", (username,))
+        c.execute(
+            "SELECT id FROM users WHERE username=?",
+            (username,)
+        )
+
         user = c.fetchone()
 
         conn.close()
@@ -114,6 +89,7 @@ def register_step1():
             return "اسم المستخدم مستخدم مسبقاً"
 
         session["username"] = username
+
         return redirect("/register-step2")
 
     return render_template("register_step1.html")
@@ -121,11 +97,14 @@ def register_step1():
 
 @app.route("/register-step2", methods=["GET", "POST"])
 def register_step2():
+
     if "username" not in session:
         return redirect("/register")
 
     if request.method == "POST":
+
         session["birth_date"] = request.form.get("birth_date")
+
         return redirect("/register-step3")
 
     return render_template("register_step2.html")
@@ -133,6 +112,7 @@ def register_step2():
 
 @app.route("/register-step3", methods=["GET", "POST"])
 def register_step3():
+
     if "username" not in session:
         return redirect("/register")
 
@@ -145,6 +125,7 @@ def register_step3():
             return "كلمتا المرور غير متطابقتين"
 
         session["password"] = password
+
         return redirect("/register-step4")
 
     return render_template("register_step3.html")
@@ -152,6 +133,7 @@ def register_step3():
 
 @app.route("/register-step4", methods=["GET", "POST"])
 def register_step4():
+
     if "username" not in session:
         return redirect("/register")
 
@@ -159,19 +141,17 @@ def register_step4():
 
         email = request.form.get("email", "").strip()
 
-        code = str(random.randint(100000, 999999))
-
         session["email"] = email
-        session["verify_code"] = code
+        session["verify_code"] = "123456"
 
-    session["verify_code"] = "123456"
-    return redirect("/verify")
+        return redirect("/verify")
 
     return render_template("register_step4.html")
 
 
 @app.route("/verify", methods=["GET", "POST"])
 def verify():
+
     if "verify_code" not in session:
         return redirect("/register")
 
@@ -185,22 +165,32 @@ def verify():
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
 
-        c.execute("""
+        c.execute(
+            """
             INSERT INTO users
-            (username, email, password, birth_date, profile_pic)
+            (
+                username,
+                email,
+                password,
+                birth_date,
+                profile_pic
+            )
             VALUES (?, ?, ?, ?, ?)
-        """, (
-            session["username"],
-            session["email"],
-            session["password"],
-            session["birth_date"],
-            ""
-        ))
+            """,
+            (
+                session["username"],
+                session["email"],
+                session["password"],
+                session["birth_date"],
+                ""
+            )
+        )
 
         conn.commit()
         conn.close()
 
         username = session["username"]
+
         session.clear()
 
         return redirect(f"/chat?user={username}")
@@ -210,6 +200,7 @@ def verify():
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
+
     username = request.args.get("user", "مستخدم")
 
     conn = sqlite3.connect("chat.db")
@@ -220,13 +211,18 @@ def chat():
         msg = request.form.get("msg", "")
 
         if msg:
+
             c.execute(
                 "INSERT INTO messages (username, message) VALUES (?, ?)",
                 (username, msg)
             )
+
             conn.commit()
 
-    c.execute("SELECT username, message FROM messages ORDER BY id ASC")
+    c.execute(
+        "SELECT username, message FROM messages ORDER BY id ASC"
+    )
+
     messages = c.fetchall()
 
     conn.close()
