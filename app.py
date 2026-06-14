@@ -145,7 +145,7 @@ def register_step4():
         session["verify_code"] = code
 
     session["verify_code"] = "123456"
-return redirect("/verify")
+    return redirect("/verify")
 
     return render_template("register_step4.html")
 
