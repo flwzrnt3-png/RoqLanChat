@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ROVIQ Chat V3</title>
+<title>ROVIQ Chat V4</title>
 
 <style>
 
@@ -90,6 +90,7 @@ padding:20px;
 display:flex;
 flex-direction:column;
 gap:14px;
+scroll-behavior:smooth;
 }
 
 .messages::-webkit-scrollbar{
@@ -120,6 +121,7 @@ word-break:break-word;
 font-size:16px;
 line-height:1.7;
 animation:show .25s ease;
+box-shadow:0 5px 20px rgba(0,0,0,.2);
 }
 
 .mine .bubble{
@@ -138,6 +140,11 @@ font-size:12px;
 opacity:.8;
 margin-bottom:6px;
 font-weight:bold;
+}
+
+.msg-text{
+font-size:16px;
+line-height:1.7;
 }
 
 .time{
@@ -168,6 +175,10 @@ color:white;
 font-size:15px;
 }
 
+.msginput:focus{
+box-shadow:0 0 0 2px #4f46e5;
+}
+
 .sendbtn{
 padding:16px 22px;
 border:none;
@@ -176,10 +187,11 @@ cursor:pointer;
 font-weight:bold;
 color:white;
 background:linear-gradient(90deg,#2563eb,#7c3aed);
+transition:.2s;
 }
 
 .sendbtn:hover{
-opacity:.9;
+transform:scale(1.05);
 }
 
 .counter{
@@ -242,9 +254,8 @@ ROVIQ
 
 </div>
 
-<div class="messages">
-
-{% for user,text in messages %}
+<div class="messages" id="messages">
+  {% for user,text in messages %}
 
 {% if user == current_user %}
 
@@ -252,7 +263,9 @@ ROVIQ
 
 <div class="bubble">
 
+<div class="msg-text">
 {{ text }}
+</div>
 
 <div class="time">
 الآن
@@ -272,7 +285,9 @@ ROVIQ
 {{ user }}
 </div>
 
+<div class="msg-text">
 {{ text }}
+</div>
 
 <div class="time">
 الآن
@@ -295,7 +310,8 @@ ROVIQ
 <input
 class="msginput"
 name="msg"
-placeholder="اكتب رسالة...">
+placeholder="اكتب رسالة..."
+autocomplete="off">
 
 <button
 class="sendbtn"
@@ -306,11 +322,15 @@ type="submit">
 </form>
 
 <div class="counter">
-عدد الرسائل:
-{{ messages|length }}
+عدد الرسائل: {{ messages|length }}
 </div>
 
 </div>
+
+<script>
+const messages=document.getElementById("messages");
+messages.scrollTop=messages.scrollHeight;
+</script>
 
 </body>
 </html>
