@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المستخدمون</title>
+
+<style>
+
+body{
+background:#020617;
+color:white;
+font-family:Arial,sans-serif;
+padding:20px;
+}
+
+h2{
+margin-bottom:20px;
+}
+
+.user{
+background:#1e293b;
+padding:15px;
+margin-bottom:10px;
+border-radius:12px;
+}
+
+.user a{
+color:white;
+text-decoration:none;
+display:block;
+font-size:18px;
+}
+
+</style>
+
+</head>
+<body>
+
+<h2>المستخدمون</h2>
+
+{% for user in users %}
+
+<div class="user">
+<a href="/chat/{{ user[0] }}">
+{{ user[0] }}
+</a>
+</div>
+
+{% endfor %}
+
+</body>
+</html>
