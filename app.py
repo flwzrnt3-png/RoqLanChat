@@ -41,7 +41,7 @@ def init_db():
 
 init_db()
 
-# صفحة تسجيل الدخول
+# تسجيل الدخول (login.html مطوّر)
 @app.route("/", methods=["GET","POST"])
 def login():
     if request.method == "POST":
@@ -61,7 +61,7 @@ def login():
 
     return render_template("login.html")
 
-# صفحة التسجيل
+# التسجيل (register.html مطوّر)
 @app.route("/register", methods=["GET","POST"])
 def register():
     if request.method == "POST":
@@ -79,7 +79,7 @@ def register():
         return redirect("/")
     return render_template("register.html")
 
-# قائمة المستخدمين
+# قائمة المستخدمين (users.html قديم)
 @app.route("/users")
 def users():
     if "current_user" not in session:
@@ -91,7 +91,7 @@ def users():
     conn.close()
     return render_template("users.html", users=users, current_user=session["current_user"])
 
-# صفحة المحادثة
+# المحادثة (chat.html قديم)
 @app.route("/chat/<receiver>", methods=["GET","POST"])
 def chat(receiver):
     if "current_user" not in session:
@@ -114,7 +114,7 @@ def chat(receiver):
     conn.close()
     return render_template("chat.html", messages=messages, current_user=sender, receiver=receiver)
 
-# صفحة البروفايل
+# البروفايل (profile.html مطوّر)
 @app.route("/profile", methods=["GET","POST"])
 def profile():
     if "current_user" not in session:
@@ -136,6 +136,12 @@ def profile():
         conn.commit()
     conn.close()
     return render_template("profile.html", user=user)
+
+# تسجيل خروج
+@app.route("/logout")
+def logout():
+    session.pop("current_user", None)
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
