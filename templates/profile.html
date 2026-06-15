@@ -1,189 +1,92 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>ROVIQ Profile</title>
+<title>ROVIQ - الملف الشخصي</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 body{
-background:linear-gradient(135deg,#020617,#0f172a,#1e1b4b);
-min-height:100vh;
+background:#020617;
 color:white;
-display:flex;
-justify-content:center;
-align-items:center;
 padding:20px;
 }
-
-.card{
-
-width:100%;
-max-width:450px;
-
-background:#0f172a;
-
-border-radius:25px;
-
-padding:30px;
-
-box-shadow:0 0 35px rgba(0,0,0,.4);
-
-text-align:center;
-
-}
-
-.avatar{
-
-width:120px;
-height:120px;
-
-border-radius:50%;
-
-background:white;
-
-color:#4f46e5;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-font-size:50px;
-font-weight:bold;
-
+.container{
+max-width:500px;
 margin:auto;
-
-border:4px solid #7c3aed;
-
-}
-
-.name{
-
-margin-top:20px;
-
-font-size:28px;
-font-weight:bold;
-
-}
-
-.info{
-
-margin-top:25px;
-
-display:flex;
-flex-direction:column;
-
-gap:15px;
-
-}
-
-.box{
-
 background:#1e293b;
-
-padding:15px;
-
-border-radius:15px;
-
+padding:25px;
+border-radius:18px;
+box-shadow:0 0 25px rgba(0,0,0,.5);
 }
-
-.label{
-
-font-size:13px;
-
-opacity:.7;
-
-margin-bottom:5px;
-
+h2{text-align:center;margin-bottom:20px;}
+.profile-pic{
+width:120px;height:120px;border-radius:50%;object-fit:cover;
+border:3px solid #2563eb;margin:auto;display:block;
 }
-
-.value{
-
-font-size:17px;
-
-font-weight:bold;
-
+.upload-btn{margin:10px auto;display:block;text-align:center;}
+input,textarea,select{
+width:100%;padding:12px;margin:10px 0;
+border:none;border-radius:12px;background:#0f172a;color:white;
 }
-
-.back{
-
-display:inline-block;
-
-margin-top:25px;
-
-padding:14px 25px;
-
-border-radius:15px;
-
-background:linear-gradient(
-90deg,
-#2563eb,
-#7c3aed
-);
-
-color:white;
-
-text-decoration:none;
-
-font-weight:bold;
-
+button{
+width:100%;padding:12px;border:none;border-radius:12px;
+background:linear-gradient(90deg,#2563eb,#7c3aed);
+color:white;font-weight:bold;cursor:pointer;margin-top:10px;
 }
-
+button:hover{opacity:.9;}
+.section-title{margin-top:20px;font-size:18px;color:#60a5fa;}
+.theme-toggle{position:fixed;bottom:20px;left:20px;cursor:pointer;font-size:18px;}
 </style>
-
 </head>
-
 <body>
 
-<div class="card">
+<div class="container">
+<h2>👤 الملف الشخصي</h2>
 
-<div class="avatar">
-{{ user[0][0]|upper }}
-</div>
-
-<div class="name">
-{{ user[0] }}
+<img src="/static/profiles/default.png" class="profile-pic" id="profilePic">
+<div class="upload-btn">
+<input type="file" id="uploadPic">
 </div>
 
-<div class="info">
+<label>اسم المستخدم</label>
+<input type="text" id="username" value="Techno">
 
-<div class="box">
-<div class="label">
-البريد الإلكتروني
-</div>
-<div class="value">
-{{ user[1] }}
-</div>
+<label>البريد المرتبط</label>
+<input type="email" id="email" value="user@gmail.com" readonly>
+
+<label>الحالة / الوصف</label>
+<textarea id="status" placeholder="اكتب حالتك هنا..."></textarea>
+
+<div class="section-title">⚙️ إعدادات الحساب</div>
+<button>تغيير كلمة المرور</button>
+<button>تسجيل الخروج</button>
+<button style="background:#dc2626;">حذف الحساب</button>
+
+<div class="section-title">🎨 الثيمات</div>
+<select id="theme">
+<option>الوضع الليلي</option>
+<option>الوضع النهاري</option>
+</select>
+
+<div class="section-title">🔔 الإشعارات</div>
+<select id="notifications">
+<option>تشغيل</option>
+<option>إيقاف</option>
+</select>
+
+<div class="section-title">🔒 الأمان</div>
+<button>تفعيل التحقق بخطوتين (2FA)</button>
 </div>
 
-<div class="box">
-<div class="label">
-تاريخ الميلاد
-</div>
-<div class="value">
-{{ user[2] }}
-</div>
-</div>
+<div class="theme-toggle" onclick="toggleTheme()">🌙</div>
 
-</div>
-
-<a
-class="back"
-href="/">
-العودة
-</a>
-
-</div>
+<script>
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
+</script>
 
 </body>
-  </html>
+</html>
