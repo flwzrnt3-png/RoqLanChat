@@ -134,6 +134,7 @@ def register_step3():
         return redirect("/register-step4")
 
     return render_template("register_step3.html")
+    
     @app.route("/register-step4", methods=["GET", "POST"])
 def register_step4():
 
