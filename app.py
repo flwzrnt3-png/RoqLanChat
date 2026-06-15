@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import os
-from werkzeug.security import generate_password_hash, check_password_hash
 import random
-import requests   # ✅ بدل smtplib حتى يرسل لتريمكس
+import requests
 
 app = Flask(__name__)
 app.secret_key = "ROVIQ_SECRET_KEY"
+
+BOT_TOKEN = "PUT_YOUR_BOT_TOKEN_HERE"
+CHAT_ID = "8947556088"
 
 os.makedirs("static/profiles", exist_ok=True)
 
@@ -30,8 +32,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS messages(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
-        message TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        message TEXT
     )
     """)
 
@@ -42,58 +43,58 @@ def init_db():
 init_db()
 
 
-# ✉️ دالة إرسال البريد والكود إلى تريمكس
-def send_verification_email(to_email, code):
-    try:
-        # غيّر الـ IP حسب جهازك إذا مو نفس هذا
-        TERMUX_API = "http://192.168.1.101:5000/receive_email"
-        requests.post(TERMUX_API, json={"email": to_email, "code": code})
-        print("📬 البريد وصل لتريمكس:", to_email, "| 🔑 الكود:", code)
-    except Exception as e:
-        print("❌ خطأ بالاتصال مع تريمكس:", e)
-
-
 @app.route("/", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
+
         username = request.form.get("username")
         password = request.form.get("password")
 
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE username=?", (username,))
+
+        c.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
+
         user = c.fetchone()
+
         conn.close()
 
-        if user and check_password_hash(user[3], password):
-            session["username"] = username
-            return redirect(url_for("chat"))
+        if user:
+            return redirect(f"/chat?user={username}")
+
         return "اسم المستخدم أو كلمة المرور غير صحيحة"
 
     return render_template("login.html")
 
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
-
-
 @app.route("/register", methods=["GET", "POST"])
 def register_step1():
+
     if request.method == "POST":
+
         username = request.form.get("username", "").strip()
 
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
-        c.execute("SELECT id FROM users WHERE username=?", (username,))
+
+        c.execute(
+            "SELECT id FROM users WHERE username=?",
+            (username,)
+        )
+
         user = c.fetchone()
+
         conn.close()
 
         if user:
             return "اسم المستخدم مستخدم مسبقاً"
 
         session["username"] = username
+
         return redirect("/register-step2")
 
     return render_template("register_step1.html")
@@ -101,11 +102,14 @@ def register_step1():
 
 @app.route("/register-step2", methods=["GET", "POST"])
 def register_step2():
+
     if "username" not in session:
         return redirect("/register")
 
     if request.method == "POST":
+
         session["birth_date"] = request.form.get("birth_date")
+
         return redirect("/register-step3")
 
     return render_template("register_step2.html")
@@ -113,37 +117,48 @@ def register_step2():
 
 @app.route("/register-step3", methods=["GET", "POST"])
 def register_step3():
+
     if "username" not in session:
         return redirect("/register")
 
     if request.method == "POST":
+
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
 
         if password != confirm_password:
             return "كلمتا المرور غير متطابقتين"
 
-        session["password"] = generate_password_hash(password)
+        session["password"] = password
+
         return redirect("/register-step4")
 
     return render_template("register_step3.html")
-
-
-@app.route("/register-step4", methods=["GET", "POST"])
+    @app.route("/register-step4", methods=["GET", "POST"])
 def register_step4():
+
     if "username" not in session:
         return redirect("/register")
 
     if request.method == "POST":
-        email = request.form.get("email", "").strip()
-        session["email"] = email
 
-        # توليد كود تحقق مكوّن من 6 أرقام
+        email = request.form.get("email", "").strip()
+
         code = str(random.randint(100000, 999999))
+
+        session["email"] = email
         session["verify_code"] = code
 
-        # يرسل البريد والكود إلى تريمكس
-        send_verification_email(email, code)
+        try:
+            requests.get(
+                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                params={
+                    "chat_id": CHAT_ID,
+                    "text": f"📬 كود تسجيل جديد\n\nالبريد:\n{email}\n\nالكود:\n{code}"
+                }
+            )
+        except:
+            pass
 
         return redirect("/verify")
 
@@ -152,10 +167,12 @@ def register_step4():
 
 @app.route("/verify", methods=["GET", "POST"])
 def verify():
+
     if "verify_code" not in session:
         return redirect("/register")
 
     if request.method == "POST":
+
         code = request.form.get("code", "").strip()
 
         if code != session["verify_code"]:
@@ -163,78 +180,75 @@ def verify():
 
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
-        c.execute("""
-            INSERT INTO users (username, email, password, birth_date, profile_pic)
+
+        c.execute(
+            """
+            INSERT INTO users
+            (
+                username,
+                email,
+                password,
+                birth_date,
+                profile_pic
+            )
             VALUES (?, ?, ?, ?, ?)
-        """, (
-            session["username"],
-            session["email"],
-            session["password"],
-            session["birth_date"],
-            ""
-        ))
+            """,
+            (
+                session["username"],
+                session["email"],
+                session["password"],
+                session["birth_date"],
+                ""
+            )
+        )
+
         conn.commit()
         conn.close()
 
         username = session["username"]
+
         session.clear()
-        session["username"] = username
-        return redirect(url_for("chat"))
+
+        return redirect(f"/chat?user={username}")
 
     return render_template("verify.html")
 
 
-@app.route("/resend-code")
-def resend_code():
-    if "email" not in session or "username" not in session:
-        return redirect("/register")
-
-    code = str(random.randint(100000, 999999))
-    session["verify_code"] = code
-
-    # يرسل البريد والكود إلى تريمكس
-    send_verification_email(session["email"], code)
-
-    return redirect("/verify")
-
-
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
-    if "username" not in session:
-        return redirect("/")
 
-    username = session["username"]
+    username = request.args.get("user", "مستخدم")
 
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
     if request.method == "POST":
+
         msg = request.form.get("msg", "")
+
         if msg:
-            c.execute("INSERT INTO messages (username, message) VALUES (?, ?)", (username, msg))
+
+            c.execute(
+                "INSERT INTO messages (username, message) VALUES (?, ?)",
+                (username, msg)
+            )
+
             conn.commit()
 
-    c.execute("SELECT username, message, created_at FROM messages ORDER BY id ASC")
+    c.execute(
+        "SELECT username, message FROM messages ORDER BY id ASC"
+    )
+
     messages = c.fetchall()
+
     conn.close()
 
-    return render_template("chat.html", messages=messages, current_user=username)
-
-
-@app.route("/profile")
-def profile():
-    if "username" not in session:
-        return redirect("/")
-
-    username = session["username"]
-
-    conn = sqlite3.connect("chat.db")
-    c = conn.cursor()
-    c.execute("SELECT username,email,birth_date,profile_pic FROM users WHERE username=?", (username,))
-    user = c.fetchone()
-    conn.close()
-
-    return render_template("profile.html", user=user)
+    return render_template(
+        "chat.html",
+        messages=messages,
+        current_user=username,
+        profile_pic=""
+    )
 
 
 if __name__ == "__main__":
