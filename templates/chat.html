@@ -44,13 +44,18 @@ display:flex;align-items:center;justify-content:center;font-weight:bold;font-siz
 .msg-text{font-size:16px;line-height:1.7;}
 .time{font-size:11px;opacity:.6;margin-top:6px;text-align:right;}
 .reactions{margin-top:6px;display:flex;gap:6px;font-size:18px;}
+.read-status{font-size:11px;opacity:.6;margin-top:4px;text-align:left;}
 .bottom{padding:15px;background:#0f172a;border-top:1px solid rgba(255,255,255,.08);}
 .chat-form{display:flex;gap:10px;}
 .msginput{flex:1;padding:16px;border:none;outline:none;border-radius:18px;background:#1e293b;color:white;font-size:15px;}
 .sendbtn{padding:16px 22px;border:none;border-radius:18px;cursor:pointer;font-weight:bold;color:white;background:linear-gradient(90deg,#2563eb,#7c3aed);}
 .attachbtn{padding:16px;border:none;border-radius:18px;cursor:pointer;font-weight:bold;color:white;background:#9333ea;}
+.voicebtn{padding:16px;border:none;border-radius:18px;cursor:pointer;font-weight:bold;color:white;background:#22c55e;}
 .counter{font-size:12px;opacity:.8;margin-top:8px;text-align:center;}
 .typing{font-size:12px;color:#60a5fa;margin-top:5px;text-align:right;font-style:italic;}
+.search-box{padding:10px;background:#1e293b;border-radius:12px;margin:10px;}
+.search-input{width:100%;padding:10px;border:none;border-radius:12px;background:#0f172a;color:white;}
+.theme-toggle{position:absolute;top:10px;left:10px;cursor:pointer;font-size:18px;}
 </style>
 </head>
 <body>
@@ -70,6 +75,10 @@ display:flex;align-items:center;justify-content:center;font-weight:bold;font-siz
 <div class="logo"><a href="/users">⬅</a></div>
 </div>
 
+<div class="search-box">
+<input class="search-input" placeholder="🔍 ابحث داخل المحادثة...">
+</div>
+
 <div class="messages" id="messages">
 {% for user,text,time in messages %}
 {% if user == current_user %}
@@ -77,6 +86,7 @@ display:flex;align-items:center;justify-content:center;font-weight:bold;font-siz
 <div class="bubble">
 <div class="msg-text">{{ text }}</div>
 <div class="time">{{ time }}</div>
+<div class="read-status">✅✅ مقروءة</div>
 <div class="reactions">👍 ❤️ 😂 😮</div>
 </div>
 </div>
@@ -96,12 +106,15 @@ display:flex;align-items:center;justify-content:center;font-weight:bold;font-siz
 <div class="bottom">
 <form method="POST" class="chat-form" enctype="multipart/form-data">
 <button class="attachbtn" type="button">📎</button>
+<button class="voicebtn" type="button">🎤</button>
 <input class="msginput" name="msg" placeholder="اكتب رسالة..." autocomplete="off">
 <button class="sendbtn" type="submit">➤</button>
 </form>
 <div class="typing" id="typing"></div>
 <div class="counter">عدد الرسائل: {{ messages|length }}</div>
 </div>
+
+<div class="theme-toggle" onclick="toggleTheme()">🌙</div>
 
 <script>
 const messages = document.getElementById("messages");
@@ -111,18 +124,24 @@ messages.scrollTop = messages.scrollHeight;
 const input = document.querySelector(".msginput");
 const typing = document.getElementById("typing");
 input.addEventListener("input", () => {
-  if(input.value.trim() !== ""){
-    typing.innerText = "يكتب الآن...";
-  } else {
-    typing.innerText = "";
-  }
+  typing.innerText = input.value.trim() !== "" ? "يكتب الآن..." : "";
 });
 
-// زر المرفقات (مستقبلاً يفتح نافذة اختيار ملفات)
+// زر المرفقات
 document.querySelector(".attachbtn").addEventListener("click", () => {
-  alert("ميزة إرسال الصور/الملفات ستُضاف قريباً 🚀");
+  alert("ميزة إرسال الصور/الملفات 🚀");
 });
+
+// زر الصوت
+document.querySelector(".voicebtn").addEventListener("click", () => {
+  alert("ميزة تسجيل الرسائل الصوتية 🎤");
+});
+
+// تبديل الثيم
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
 </script>
 
 </body>
-  </html>
+</html>
