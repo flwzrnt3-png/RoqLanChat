@@ -16,6 +16,7 @@ padding:20px;
 h2{margin-bottom:20px;}
 .search-box{margin-bottom:20px;}
 .search-input{width:100%;padding:12px;border:none;border-radius:12px;background:#1e293b;color:white;}
+.section-title{margin:20px 0 10px;font-size:18px;font-weight:bold;color:#60a5fa;}
 .user{
 background:#1e293b;
 padding:15px;
@@ -39,16 +40,18 @@ display:flex;align-items:center;justify-content:center;font-weight:bold;font-siz
 .time{font-size:12px;opacity:.6;}
 .unread{background:#2563eb;color:white;font-size:12px;padding:4px 8px;border-radius:12px;}
 .status{font-size:12px;opacity:.8;color:#22c55e;}
+.theme-toggle{position:fixed;bottom:20px;left:20px;cursor:pointer;font-size:18px;}
 </style>
 </head>
 <body>
 
-<h2>المستخدمون</h2>
+<h2>المحادثات</h2>
 
 <div class="search-box">
-<input class="search-input" id="search" placeholder="🔍 ابحث عن مستخدم...">
+<input class="search-input" id="search" placeholder="🔍 ابحث عن مستخدم أو مجموعة...">
 </div>
 
+<div class="section-title">🧑‍🤝‍🧑 المستخدمون</div>
 {% for user,last_msg,time,unread,profile_pic,status in users %}
 <a href="/chat/{{ user }}">
 <div class="user">
@@ -74,6 +77,60 @@ display:flex;align-items:center;justify-content:center;font-weight:bold;font-siz
 </a>
 {% endfor %}
 
+<div class="section-title">👥 المجموعات</div>
+{% for group,last_msg,time,unread,profile_pic,status in groups %}
+<a href="/group/{{ group }}">
+<div class="user">
+<div class="left">
+{% if profile_pic %}
+<img class="profile" src="/static/groups/{{ profile_pic }}">
+{% else %}
+<div class="default-profile">{{ group[0]|upper }}</div>
+{% endif %}
+<div class="info">
+<div class="name">{{ group }}</div>
+<div class="last-msg">{{ last_msg }}</div>
+</div>
+</div>
+<div class="right">
+<div class="time">{{ time }}</div>
+{% if unread > 0 %}
+<div class="unread">{{ unread }}</div>
+{% endif %}
+<div class="status">{{ status }}</div>
+</div>
+</div>
+</a>
+{% endfor %}
+
+<div class="section-title">📢 القنوات</div>
+{% for channel,last_msg,time,unread,profile_pic,status in channels %}
+<a href="/channel/{{ channel }}">
+<div class="user">
+<div class="left">
+{% if profile_pic %}
+<img class="profile" src="/static/channels/{{ profile_pic }}">
+{% else %}
+<div class="default-profile">{{ channel[0]|upper }}</div>
+{% endif %}
+<div class="info">
+<div class="name">{{ channel }}</div>
+<div class="last-msg">{{ last_msg }}</div>
+</div>
+</div>
+<div class="right">
+<div class="time">{{ time }}</div>
+{% if unread > 0 %}
+<div class="unread">{{ unread }}</div>
+{% endif %}
+<div class="status">{{ status }}</div>
+</div>
+</div>
+</a>
+{% endfor %}
+
+<div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+
 <script>
 // بحث داخل القائمة
 const searchInput = document.getElementById("search");
@@ -84,7 +141,12 @@ searchInput.addEventListener("input", () => {
     user.style.display = name.includes(filter) ? "flex" : "none";
   });
 });
+
+// تبديل الثيم
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
 </script>
 
 </body>
-</html>
+  </html>
