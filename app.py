@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3, os, random, requests, datetime
+import sqlite3
+import os
+import random
+import requests
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "ROVIQ_SECRET_KEY"
@@ -9,7 +13,7 @@ CHAT_ID = "8947556088"
 
 os.makedirs("static/profiles", exist_ok=True)
 
-# تهيئة قاعدة البيانات
+
 def init_db():
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
@@ -21,8 +25,7 @@ def init_db():
         email TEXT UNIQUE,
         password TEXT,
         birth_date TEXT,
-        profile_pic TEXT,
-        status TEXT
+        profile_pic TEXT
     )
     """)
 
@@ -39,118 +42,235 @@ def init_db():
     conn.commit()
     conn.close()
 
+
 init_db()
 
-# صفحة تسجيل الدخول
+
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get("email")
-        otp = request.form.get("otp")
-
-        if otp == session.get("verify_code") and email == session.get("email"):
-            session["current_user"] = email
-            return redirect("/users")
-        return "❌ البريد أو الكود غير صحيح"
-
-    return render_template("login.html")
-
-# إرسال كود تحقق عبر البوت
-@app.route("/send_otp", methods=["POST"])
-def send_otp():
-    email = request.form.get("email", "").strip()
-    code = str(random.randint(100000, 999999))
-    session["email"] = email
-    session["verify_code"] = code
-
-    try:
-        requests.get(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-            params={
-                "chat_id": CHAT_ID,
-                "text": f"📬 كود تسجيل دخول\n\nالبريد:\n{email}\n\nالكود:\n{code}"
-            }
-        )
-    except:
-        pass
-
-    return "✅ تم إرسال الكود"
-
-# تسجيل حساب جديد
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        birth_date = request.form.get("birth_date")
-        email = request.form.get("email")
 
         conn = sqlite3.connect("chat.db")
         c = conn.cursor()
-        c.execute("INSERT INTO users (username,email,password,birth_date,profile_pic,status) VALUES (?,?,?,?,?,?)",
-                  (username,email,password,birth_date,"",""))
+        c.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
+        user = c.fetchone()
+        conn.close()
+
+        if user:
+            session["current_user"] = username
+            return redirect("/users")
+
+        return "اسم المستخدم أو كلمة المرور غير صحيحة"
+
+    return render_template("login.html")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register_step1():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+
+        conn = sqlite3.connect("chat.db")
+        c = conn.cursor()
+        c.execute("SELECT id FROM users WHERE username=?", (username,))
+        user = c.fetchone()
+        conn.close()
+
+        if user:
+            return "اسم المستخدم مستخدم مسبقاً"
+
+        session["username"] = username
+        return redirect("/register-step2")
+
+    return render_template("register_step1.html")
+
+
+@app.route("/register-step2", methods=["GET", "POST"])
+def register_step2():
+    if "username" not in session:
+        return redirect("/register")
+
+    if request.method == "POST":
+        session["birth_date"] = request.form.get("birth_date")
+        return redirect("/register-step3")
+
+    return render_template("register_step2.html")
+
+
+@app.route("/register-step3", methods=["GET", "POST"])
+def register_step3():
+    if "username" not in session:
+        return redirect("/register")
+
+    if request.method == "POST":
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if password != confirm_password:
+            return "كلمتا المرور غير متطابقتين"
+
+        session["password"] = password
+        return redirect("/register-step4")
+
+    return render_template("register_step3.html")
+
+
+@app.route("/register-step4", methods=["GET", "POST"])
+def register_step4():
+    if "username" not in session:
+        return redirect("/register")
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        code = str(random.randint(100000, 999999))
+
+        session["email"] = email
+        session["verify_code"] = code
+
+        try:
+            requests.get(
+                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                params={
+                    "chat_id": CHAT_ID,
+                    "text": f"📬 كود تسجيل جديد\n\nالبريد:\n{email}\n\nالكود:\n{code}"
+                }
+            )
+        except:
+            pass
+
+        return redirect("/verify")
+
+    return render_template("register_step4.html")
+
+
+@app.route("/verify", methods=["GET", "POST"])
+def verify():
+    if "verify_code" not in session:
+        return redirect("/register")
+
+    if request.method == "POST":
+        code = request.form.get("code", "").strip()
+
+        if code != session["verify_code"]:
+            return "كود التحقق غير صحيح"
+
+        conn = sqlite3.connect("chat.db")
+        c = conn.cursor()
+        c.execute(
+            """
+            INSERT INTO users
+            (username, email, password, birth_date, profile_pic)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                session["username"],
+                session["email"],
+                session["password"],
+                session["birth_date"],
+                ""
+            )
+        )
         conn.commit()
         conn.close()
-        return redirect("/")
-    return render_template("register.html")
 
-# قائمة المستخدمين
+        session["current_user"] = session["username"]
+        session.pop("verify_code", None)
+
+        return redirect("/users")
+
+    return render_template("verify.html")
+
+
 @app.route("/users")
 def users():
     if "current_user" not in session:
         return redirect("/")
+
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
-    c.execute("SELECT username, profile_pic, status FROM users WHERE email != ?", (session["current_user"],))
+    c.execute(
+        "SELECT username, profile_pic FROM users WHERE username != ?",
+        (session["current_user"],)
+    )
     users = c.fetchall()
-    conn.close()
-    return render_template("users.html", users=users, current_user=session["current_user"])
 
-# صفحة المحادثة
-@app.route("/chat/<receiver>", methods=["GET","POST"])
-def chat(receiver):
+    user_data = []
+    for username, profile_pic in users:
+        c.execute("""
+            SELECT message, timestamp
+            FROM private_messages
+            WHERE (sender=? AND receiver=?)
+               OR (sender=? AND receiver=?)
+            ORDER BY id DESC LIMIT 1
+        """, (session["current_user"], username, username, session["current_user"]))
+        last_msg = c.fetchone()
+
+        if last_msg:
+            msg_text, msg_time = last_msg
+        else:
+            msg_text, msg_time = None, None
+
+        user_data.append((username, profile_pic, msg_text, msg_time))
+
+    conn.close()
+
+    return render_template(
+        "users.html",
+        users=user_data,
+        current_user=session["current_user"]
+    )
+
+
+@app.route("/chat/<receiver>", methods=["GET", "POST"])
+def private_chat(receiver):
     if "current_user" not in session:
         return redirect("/")
+
     sender = session["current_user"]
+
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
     if request.method == "POST":
-        msg = request.form.get("msg","").strip()
+        msg = request.form.get("msg", "").strip()
         if msg:
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-            c.execute("INSERT INTO private_messages (sender,receiver,message,timestamp) VALUES (?,?,?,?)",
-                      (sender,receiver,msg,timestamp))
+            c.execute(
+                """
+                INSERT INTO private_messages
+                (sender, receiver, message, timestamp)
+                VALUES (?, ?, ?, ?)
+                """,
+                (sender, receiver, msg, timestamp)
+            )
             conn.commit()
 
-    c.execute("SELECT sender,message,timestamp FROM private_messages WHERE (sender=? AND receiver=?) OR (sender=? AND receiver=?) ORDER BY id ASC",
-              (sender,receiver,receiver,sender))
+    c.execute(
+        """
+        SELECT sender, message, timestamp
+        FROM private_messages
+        WHERE (sender=? AND receiver=?)
+           OR (sender=? AND receiver=?)
+        ORDER BY id ASC
+        """,
+        (sender, receiver, receiver, sender)
+    )
     messages = c.fetchall()
     conn.close()
-    return render_template("chat.html", messages=messages, current_user=sender, receiver=receiver)
 
-# صفحة البروفايل
-@app.route("/profile", methods=["GET","POST"])
-def profile():
-    if "current_user" not in session:
-        return redirect("/")
-    email = session["current_user"]
-    conn = sqlite3.connect("chat.db")
-    c = conn.cursor()
-    c.execute("SELECT * FROM users WHERE email=?",(email,))
-    user = c.fetchone()
+    return render_template(
+        "chat.html",
+        messages=messages,
+        current_user=sender,
+        receiver=receiver,
+        profile_pic=""
+    )
 
-    if request.method == "POST":
-        status = request.form.get("status","").strip()
-        file = request.files.get("profile_pic")
-        pic_path = user[5]  # profile_pic
-        if file:
-            pic_path = f"static/profiles/{email}.png"
-            file.save(pic_path)
-        c.execute("UPDATE users SET status=?, profile_pic=? WHERE email=?",(status,pic_path,email))
-        conn.commit()
-    conn.close()
-    return render_template("profile.html", user=user)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
