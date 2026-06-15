@@ -3,150 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROVIQ - قائمة المستخدمين</title>
+<title>ROVIQ - المستخدمين</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 body{
 background:#020617;
 color:white;
-font-family:Arial,sans-serif;
 padding:20px;
 }
-h2{margin-bottom:20px;}
-.search-box{margin-bottom:20px;}
-.search-input{width:100%;padding:12px;border:none;border-radius:12px;background:#1e293b;color:white;}
-.section-title{margin:20px 0 10px;font-size:18px;font-weight:bold;color:#60a5fa;}
+.container{
+max-width:500px;
+margin:auto;
+}
+h2{text-align:center;margin-bottom:20px;}
 .user{
-background:#1e293b;
-padding:15px;
-margin-bottom:10px;
-border-radius:12px;
 display:flex;
 align-items:center;
 justify-content:space-between;
-cursor:pointer;
-transition:.3s;
+background:rgba(255,255,255,.05);
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
 }
-.user:hover{background:#334155;}
-.left{display:flex;align-items:center;gap:12px;}
-.profile{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #4f46e5;}
-.default-profile{width:50px;height:50px;border-radius:50%;background:#4f46e5;color:white;
-display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px;}
-.info{display:flex;flex-direction:column;}
-.name{font-size:16px;font-weight:bold;}
-.last-msg{font-size:13px;opacity:.8;}
-.right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
-.time{font-size:12px;opacity:.6;}
-.unread{background:#2563eb;color:white;font-size:12px;padding:4px 8px;border-radius:12px;}
-.status{font-size:12px;opacity:.8;color:#22c55e;}
-.theme-toggle{position:fixed;bottom:20px;left:20px;cursor:pointer;font-size:18px;}
+.user img{
+width:45px;height:45px;border-radius:50%;object-fit:cover;
+}
+.info{flex:1;margin-left:12px;}
+.name{font-weight:bold;}
+.last-msg{font-size:14px;color:#9ca3af;}
+.time{font-size:12px;color:#6b7280;}
 </style>
 </head>
 <body>
+<div class="container">
+<h2>قائمة المستخدمين</h2>
 
-<h2>المحادثات</h2>
-
-<div class="search-box">
-<input class="search-input" id="search" placeholder="🔍 ابحث عن مستخدم أو مجموعة...">
-</div>
-
-<div class="section-title">🧑‍🤝‍🧑 المستخدمون</div>
-{% for user,last_msg,time,unread,profile_pic,status in users %}
-<a href="/chat/{{ user }}">
 <div class="user">
-<div class="left">
-{% if profile_pic %}
-<img class="profile" src="/static/profiles/{{ profile_pic }}">
-{% else %}
-<div class="default-profile">{{ user[0]|upper }}</div>
-{% endif %}
+<img src="/static/profiles/default.png" alt="صورة">
 <div class="info">
-<div class="name">{{ user }}</div>
-<div class="last-msg">{{ last_msg }}</div>
+<div class="name">User1</div>
+<div class="last-msg">آخر رسالة...</div>
 </div>
+<div class="time">10:30</div>
 </div>
-<div class="right">
-<div class="time">{{ time }}</div>
-{% if unread > 0 %}
-<div class="unread">{{ unread }}</div>
-{% endif %}
-<div class="status">{{ status }}</div>
-</div>
-</div>
-</a>
-{% endfor %}
 
-<div class="section-title">👥 المجموعات</div>
-{% for group,last_msg,time,unread,profile_pic,status in groups %}
-<a href="/group/{{ group }}">
 <div class="user">
-<div class="left">
-{% if profile_pic %}
-<img class="profile" src="/static/groups/{{ profile_pic }}">
-{% else %}
-<div class="default-profile">{{ group[0]|upper }}</div>
-{% endif %}
+<img src="/static/profiles/default.png" alt="صورة">
 <div class="info">
-<div class="name">{{ group }}</div>
-<div class="last-msg">{{ last_msg }}</div>
+<div class="name">User2</div>
+<div class="last-msg">آخر رسالة...</div>
 </div>
+<div class="time">09:15</div>
 </div>
-<div class="right">
-<div class="time">{{ time }}</div>
-{% if unread > 0 %}
-<div class="unread">{{ unread }}</div>
-{% endif %}
-<div class="status">{{ status }}</div>
-</div>
-</div>
-</a>
-{% endfor %}
 
-<div class="section-title">📢 القنوات</div>
-{% for channel,last_msg,time,unread,profile_pic,status in channels %}
-<a href="/channel/{{ channel }}">
-<div class="user">
-<div class="left">
-{% if profile_pic %}
-<img class="profile" src="/static/channels/{{ profile_pic }}">
-{% else %}
-<div class="default-profile">{{ channel[0]|upper }}</div>
-{% endif %}
-<div class="info">
-<div class="name">{{ channel }}</div>
-<div class="last-msg">{{ last_msg }}</div>
 </div>
-</div>
-<div class="right">
-<div class="time">{{ time }}</div>
-{% if unread > 0 %}
-<div class="unread">{{ unread }}</div>
-{% endif %}
-<div class="status">{{ status }}</div>
-</div>
-</div>
-</a>
-{% endfor %}
-
-<div class="theme-toggle" onclick="toggleTheme()">🌙</div>
-
-<script>
-// بحث داخل القائمة
-const searchInput = document.getElementById("search");
-searchInput.addEventListener("input", () => {
-  const filter = searchInput.value.toLowerCase();
-  document.querySelectorAll(".user").forEach(user => {
-    const name = user.querySelector(".name").innerText.toLowerCase();
-    user.style.display = name.includes(filter) ? "flex" : "none";
-  });
-});
-
-// تبديل الثيم
-function toggleTheme(){
-  document.body.classList.toggle("light");
-}
-</script>
-
 </body>
-  </html>
+</html>
