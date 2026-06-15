@@ -3,106 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROVIQ - التحقق</title>
+<title>ROVIQ - الملف الشخصي</title>
+
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 body{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:
-radial-gradient(circle at top left,#6a00ff 0%,transparent 35%),
-radial-gradient(circle at bottom right,#008cff 0%,transparent 35%),
-#020617;
+background:#020617;
 color:white;
-overflow:hidden;
+padding:20px;
 }
 .container{
-width:90%;
-max-width:420px;
-text-align:center;
-}
-.logo{
-width:100px;
-height:100px;
+max-width:500px;
 margin:auto;
-border-radius:28px;
-background:linear-gradient(135deg,#1ea7ff,#8a2eff);
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:55px;
-font-weight:bold;
-color:white;
-box-shadow:
-0 0 35px rgba(138,46,255,.7),
-0 0 60px rgba(30,167,255,.5);
-}
-.app-name{
-font-size:28px;
-font-weight:bold;
-letter-spacing:3px;
-margin-top:12px;
-margin-bottom:25px;
-}
-form{
-margin-top:10px;
-}
-input{
-width:100%;
-padding:18px;
-margin-bottom:16px;
 background:rgba(255,255,255,.05);
-backdrop-filter:blur(12px);
-border:1px solid rgba(255,255,255,.08);
+padding:25px;
 border-radius:18px;
-color:white;
-font-size:16px;
 }
-input:focus{
-outline:none;
-border-color:#8a2eff;
+h2{text-align:center;margin-bottom:20px;}
+.profile-pic{
+width:100px;height:100px;border-radius:50%;object-fit:cover;
+margin:auto;display:block;
 }
-.verify-btn{
-width:100%;
-padding:18px;
-border:none;
-border-radius:20px;
-font-size:20px;
-font-weight:bold;
-cursor:pointer;
+input,textarea{
+width:100%;padding:12px;margin:10px 0;
+border:none;border-radius:12px;
+background:rgba(255,255,255,.08);color:white;
+}
+button{
+width:100%;padding:12px;border:none;border-radius:12px;
 background:linear-gradient(90deg,#1ea7ff,#8a2eff);
-color:white;
-}
-.resend{
-margin-top:20px;
-}
-.resend a{
-color:#3db2ff;
-text-decoration:none;
-font-size:15px;
+color:white;font-weight:bold;cursor:pointer;margin-top:10px;
 }
 </style>
 </head>
 <body>
 <div class="container">
-<div class="logo">R</div>
-<div class="app-name">ROVIQ</div>
-<h2>تحقق من بريدك الإلكتروني</h2>
-<p>تم إرسال كود التحقق إلى بريدك: {{ session['email'] }}</p>
-<form method="POST">
-<input type="text" name="code" placeholder="أدخل الكود هنا" required>
-<button class="verify-btn" type="submit">تأكيد</button>
-</form>
-<div class="resend">
-<p>لم يصلك الكود؟ <a href="/register-step4">إعادة الإرسال</a></p>
-</div>
+<h2>👤 الملف الشخصي</h2>
+<img src="/static/profiles/default.png" class="profile-pic">
+<label>اسم المستخدم</label>
+<input type="text" value="User">
+<label>البريد الإلكتروني</label>
+<input type="email" value="user@gmail.com" readonly>
+<label>الحالة</label>
+<textarea placeholder="اكتب حالتك هنا..."></textarea>
+<button>حفظ التغييرات</button>
 </div>
 </body>
 </html>
