@@ -3,122 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>ROVIQ - إنشاء حساب</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 body{
-background:linear-gradient(135deg,#020617,#000814,#0a2472);
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-padding:20px;
+background:#020617;
+color:white;
 }
-
-.box{
-width:100%;
+.container{
+width:90%;
 max-width:420px;
 background:rgba(255,255,255,.05);
-backdrop-filter:blur(15px);
-border-radius:25px;
-padding:30px;
-border:1px solid rgba(255,255,255,.1);
-box-shadow:0 0 35px rgba(0,140,255,.2);
+padding:25px;
+border-radius:18px;
+backdrop-filter:blur(12px);
 }
-
-.logo{
-text-align:center;
-font-size:42px;
-font-weight:bold;
-color:white;
-margin-bottom:15px;
-}
-
-.subtitle{
-text-align:center;
-color:#bbb;
-margin-bottom:25px;
-}
-
+h2{text-align:center;margin-bottom:20px;}
 input{
 width:100%;
-padding:15px;
-margin-bottom:15px;
+padding:14px;
+margin-bottom:16px;
 border:none;
-outline:none;
-border-radius:14px;
-background:#0f172a;
+border-radius:12px;
+background:rgba(255,255,255,.08);
 color:white;
-font-size:15px;
-border:1px solid rgba(255,255,255,.08);
 }
-
-input:focus{
-border-color:#4f46e5;
-}
-
+input:focus{outline:none;border:1px solid #8a2eff;}
 button{
 width:100%;
-padding:15px;
+padding:16px;
 border:none;
 border-radius:14px;
-background:linear-gradient(90deg,#38bdf8,#7c3aed);
+background:linear-gradient(90deg,#1ea7ff,#8a2eff);
 color:white;
-font-size:17px;
+font-size:18px;
 font-weight:bold;
 cursor:pointer;
 }
-
-.login-link{
-margin-top:18px;
-text-align:center;
-}
-
-.login-link a{
-color:#60a5fa;
-text-decoration:none;
-}
-
 </style>
 </head>
 <body>
-
-<div class="box">
-
-<div class="logo">ROVIQ</div>
-
-<div class="subtitle">
-الخطوة الأولى
-</div>
-
+<div class="container">
+<h2>إنشاء حساب جديد</h2>
 <form method="POST">
-
-<input
-type="text"
-name="username"
-placeholder="اسم المستخدم"
-required>
-
-<button type="submit">
-التالي
-</button>
-
+<input type="text" name="username" placeholder="اسم المستخدم" required>
+<input type="email" name="email" placeholder="البريد الإلكتروني" required>
+<input type="password" name="password" placeholder="كلمة المرور" required>
+<input type="password" name="confirm_password" placeholder="تأكيد كلمة المرور" required>
+<button type="submit">تسجيل</button>
 </form>
-
-<div class="login-link">
-<a href="/">لديك حساب؟ تسجيل الدخول</a>
 </div>
-
-</div>
-
 </body>
 </html>
