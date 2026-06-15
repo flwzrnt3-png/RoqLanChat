@@ -7,7 +7,7 @@ import requests
 app = Flask(__name__)
 app.secret_key = "ROVIQ_SECRET_KEY"
 
-BOT_TOKEN = "8451090907:AAFlLYcJc-MtXqKKdFCpOqwQ2pWu7VhR368"
+BOT_TOKEN = "8961109826:AAHgJgLP4R6YDo1L_2BYQ8w3G_NabLQrHTg"
 CHAT_ID = "8947556088"
 
 os.makedirs("static/profiles", exist_ok=True)
