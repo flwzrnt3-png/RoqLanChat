@@ -3,51 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>المستخدمون</title>
+<title>ROVIQ - قائمة المحادثات</title>
 
 <style>
-
 body{
-background:#020617;
+background:#0f172a;
 color:white;
 font-family:Arial,sans-serif;
+margin:0;
+padding:0;
+}
+
+.header{
+background:linear-gradient(90deg,#2563eb,#4f46e5,#7c3aed);
+padding:20px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+box-shadow:0 0 25px rgba(0,0,0,.4);
+}
+
+.container{
 padding:20px;
 }
 
-h2{
-margin-bottom:20px;
-}
-
-.user{
+.chat-card{
+display:flex;
+align-items:center;
 background:#1e293b;
 padding:15px;
-margin-bottom:10px;
-border-radius:12px;
+margin-bottom:12px;
+border-radius:16px;
+cursor:pointer;
+transition:.3s;
+box-shadow:0 4px 15px rgba(0,0,0,.25);
 }
 
-.user a{
+.chat-card:hover{
+transform:scale(1.02);
+background:#2d3748;
+}
+
+.profile{
+width:55px;
+height:55px;
+border-radius:50%;
+object-fit:cover;
+margin-right:15px;
+border:2px solid #4f46e5;
+}
+
+.default-profile{
+width:55px;
+height:55px;
+border-radius:50%;
+background:#4f46e5;
 color:white;
-text-decoration:none;
-display:block;
-font-size:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+font-weight:bold;
+margin-right:15px;
 }
 
-</style>
+.info{
+flex:1;
+}
 
+.username{
+font-size:18px;
+font-weight:bold;
+margin-bottom:6px;
+}
+
+.last-msg{
+font-size:14px;
+color:#cbd5e1;
+margin-bottom:4px;
+}
+
+.meta{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.time{
+font-size:12px;
+color:#94a3b8;
+}
+
+.status-dot{
+width:10px;
+height:10px;
+border-radius:50%;
+background:#22c55e;
+box-shadow:0 0 10px #22c55e;
+animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);opacity:1;}
+50%{transform:scale(1.3);opacity:.7;}
+100%{transform:scale(1);opacity:1;}
+}
+</style>
 </head>
 <body>
 
-<h2>المستخدمون</h2>
+<div class="header">قائمة المحادثات</div>
 
+<div class="container">
 {% for user in users %}
-
-<div class="user">
 <a href="/chat/{{ user[0] }}">
-{{ user[0] }}
-</a>
+<div class="chat-card">
+
+{% if user[1] %}
+<img src="/static/profiles/{{ user[1] }}" class="profile">
+{% else %}
+<div class="default-profile">{{ user[0][0]|upper }}</div>
+{% endif %}
+
+<div class="info">
+<div class="username">{{ user[0] }}</div>
+<div class="last-msg">آخر رسالة: {{ user[2] or "لا توجد رسائل بعد" }}</div>
+<div class="meta">
+<div class="time">{{ user[3] or "الآن" }}</div>
+<div class="status-dot"></div>
+</div>
 </div>
 
+</div>
+</a>
 {% endfor %}
+</div>
 
 </body>
 </html>
