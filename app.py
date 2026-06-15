@@ -29,9 +29,10 @@ def init_db():
     """)
 
     c.execute("""
-    CREATE TABLE IF NOT EXISTS messages(
+    CREATE TABLE IF NOT EXISTS private_messages(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
+        sender TEXT,
+        receiver TEXT,
         message TEXT
     )
     """)
@@ -64,7 +65,8 @@ def login():
         conn.close()
 
         if user:
-            return redirect(f"/chat?user={username}")
+            session["current_user"] = username
+            return redirect("/users")
 
         return "اسم المستخدم أو كلمة المرور غير صحيحة"
 
@@ -207,38 +209,79 @@ def verify():
         conn.commit()
         conn.close()
 
-        username = session["username"]
+        session["current_user"] = session["username"]
 
-        session.clear()
+        session.pop("verify_code", None)
 
-        return redirect(f"/chat?user={username}")
+        return redirect("/users")
 
     return render_template("verify.html")
 
 
-@app.route("/chat", methods=["GET", "POST"])
-def chat():
+@app.route("/users")
+def users():
 
-    username = request.args.get("user", "مستخدم")
+    if "current_user" not in session:
+        return redirect("/")
+
+    conn = sqlite3.connect("chat.db")
+    c = conn.cursor()
+
+    c.execute(
+        "SELECT username FROM users WHERE username != ?",
+        (session["current_user"],)
+    )
+
+    users = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "users.html",
+        users=users,
+        current_user=session["current_user"]
+    )
+
+
+@app.route("/chat/<receiver>", methods=["GET", "POST"])
+def private_chat(receiver):
+
+    if "current_user" not in session:
+        return redirect("/")
+
+    sender = session["current_user"]
 
     conn = sqlite3.connect("chat.db")
     c = conn.cursor()
 
     if request.method == "POST":
 
-        msg = request.form.get("msg", "")
+        msg = request.form.get("msg", "").strip()
 
         if msg:
 
             c.execute(
-                "INSERT INTO messages (username, message) VALUES (?, ?)",
-                (username, msg)
+                """
+                INSERT INTO private_messages
+                (sender, receiver, message)
+                VALUES (?, ?, ?)
+                """,
+                (sender, receiver, msg)
             )
 
             conn.commit()
 
     c.execute(
-        "SELECT username, message FROM messages ORDER BY id ASC"
+        """
+        SELECT sender, message
+        FROM private_messages
+        WHERE
+        (sender=? AND receiver=?)
+        OR
+        (sender=? AND receiver=?)
+        ORDER BY id ASC
+        """,
+        (sender, receiver, receiver, sender)
     )
 
     messages = c.fetchall()
@@ -248,7 +291,8 @@ def chat():
     return render_template(
         "chat.html",
         messages=messages,
-        current_user=username,
+        current_user=sender,
+        receiver=receiver,
         profile_pic=""
     )
 
